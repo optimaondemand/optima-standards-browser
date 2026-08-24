@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standards Browser — Optima Academy Online</title>
+<style>
+  :root{
+    --navy:#0d2b45; --navy-deep:#081c2e; --navy-soft:#1b3f60;
+    --cyan:#2ec4d6; --gold:#f2b544;
+    --ink:#16202b; --muted:#5d6b7a; --line:#dde4ea;
+    --bg:#f4f7f9; --card:#ffffff;
+    --ok:#1c7a4a; --warn:#8a5a00;
+    --mono:"Cascadia Mono",Consolas,"SF Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
+  }
+
+  header{background:var(--navy); color:#fff; padding:18px 20px 16px}
+  header h1{margin:0 0 4px; font-size:19px; font-weight:600; letter-spacing:.2px}
+  header p{margin:0; font-size:13px; color:#b9cbdb; max-width:70ch}
+
+  .controls{
+    background:var(--navy-deep); padding:14px 20px 16px;
+    display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  }
+  .field{display:flex; flex-direction:column; gap:5px; min-width:150px}
+  .field label{font-size:11px; text-transform:uppercase; letter-spacing:.7px; color:#9fb6c9; font-weight:600}
+  select,input[type=search]{
+    font:inherit; font-size:14px; padding:8px 10px; border-radius:6px;
+    border:1px solid #2c4d6e; background:#0f3352; color:#fff; min-width:150px;
+  }
+  select:focus,input:focus{outline:2px solid var(--cyan); outline-offset:1px}
+  input[type=search]{min-width:210px}
+
+  .jbar{display:flex; flex-wrap:wrap; gap:7px; align-items:center}
+  .chip{
+    font:inherit; font-size:13px; padding:7px 12px; border-radius:999px; cursor:pointer;
+    border:1px solid #2c4d6e; background:transparent; color:#c8d8e6; transition:.15s;
+  }
+  .chip[aria-pressed="true"]{background:var(--cyan); border-color:var(--cyan); color:#04212b; font-weight:600}
+  .chip:disabled{opacity:.32; cursor:not-allowed}
+
+  .summary{
+    padding:11px 20px; background:#fff; border-bottom:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:13px; color:var(--muted);
+  }
+  .summary b{color:var(--ink)}
+  .spacer{flex:1 1 auto}
+  .btn{
+    font:inherit; font-size:13px; padding:7px 13px; border-radius:6px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--navy); font-weight:600; transition:.15s;
+  }
+  .btn:hover{border-color:var(--cyan); color:var(--navy-soft)}
+  .btn.primary{background:var(--navy); border-color:var(--navy); color:#fff}
+  .btn.primary:hover{background:var(--navy-soft)}
+
+  main{padding:18px 20px 40px}
+  .cols{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); align-items:start}
+
+  .col{background:var(--card); border:1px solid var(--line); border-radius:9px; overflow:hidden}
+  .col > h2{
+    margin:0; padding:12px 14px; font-size:15px; background:var(--navy); color:#fff;
+    display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-weight:600;
+  }
+  .col > h2 .n{font-size:12px; color:var(--gold); font-weight:600; white-space:nowrap}
+
+  .notice{
+    margin:0; padding:10px 14px; background:#fff8e8; border-bottom:1px solid #f0e0bb;
+    font-size:12.5px; color:var(--warn); line-height:1.45;
+  }
+  .notice a{color:var(--warn); font-weight:600}
+
+  .course{border-bottom:1px solid var(--line)}
+  .course:last-child{border-bottom:none}
+  .course > h3{
+    margin:0; padding:10px 14px 8px; font-size:13.5px; font-weight:600; color:var(--navy);
+    background:#f7fafc; border-bottom:1px solid var(--line);
+  }
+  .course > h3 small{display:block; font-weight:400; color:var(--muted); font-size:11.5px; margin-top:2px}
+  .course > h3 a{color:var(--muted); text-decoration:none; border-bottom:1px dotted currentColor}
+  .course > h3 a:hover{color:var(--navy)}
+
+  ol.std{list-style:none; margin:0; padding:0}
+  ol.std > li{padding:9px 14px; border-bottom:1px solid #eef2f5}
+  ol.std > li:last-child{border-bottom:none}
+  ol.std > li:target,ol.std > li.hit{background:#f0fbfd}
+
+  .code{font-family:var(--mono); font-size:12px; color:var(--navy); background:#eaf1f6;
+        padding:1.5px 6px; border-radius:4px; display:inline-block; margin-bottom:3px}
+  .txt{margin:0; font-size:14px}
+  .txt mark{background:var(--gold); color:#2a1d00; padding:0 1px; border-radius:2px}
+  .meta{margin-top:4px; display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .tag{font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; font-weight:700;
+       padding:2px 6px; border-radius:3px; background:#eef2f5; color:var(--muted)}
+  .tag.major{background:#e6f4ec; color:var(--ok)}
+  .tag.arch{background:#f3eef8; color:#5b4380}
+  .tag.flag{background:#fdecec; color:#a12b2b}
+  .tag.tt{background:#eaf1f6; color:var(--navy-soft)}
+  .linkout{font-size:12.5px; color:var(--navy-soft); font-weight:600; text-decoration:none;
+           border-bottom:1px solid var(--cyan)}
+  .linkout:hover{color:var(--navy)}
+
+  details.extra{margin-top:5px}
+  details.extra summary{font-size:12px; color:var(--muted); cursor:pointer; font-weight:600}
+  details.extra summary:hover{color:var(--navy)}
+  details.extra ul{margin:5px 0 0; padding-left:18px; font-size:13px; color:#33414f}
+  details.extra li{margin-bottom:3px}
+
+  .more{width:100%; padding:9px; font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+        background:#f7fafc; border:none; border-top:1px solid var(--line); color:var(--navy)}
+  .more:hover{background:#eef4f8}
+
+  .empty{padding:26px 16px; text-align:center; color:var(--muted); font-size:14px}
+  .state{padding:48px 20px; text-align:center; color:var(--muted)}
+  .state h2{margin:0 0 6px; font-size:17px; color:var(--ink)}
+  .bar{height:4px; background:var(--line); border-radius:2px; overflow:hidden; max-width:280px; margin:14px auto 0}
+  .bar i{display:block; height:100%; width:40%; background:var(--cyan); animation:sl 1.1s ease-in-out infinite}
+  @keyframes sl{0%{margin-left:-40%}100%{margin-left:100%}}
+
+  footer{padding:16px 20px 34px; font-size:12px; color:var(--muted); line-height:1.6}
+  footer a{color:var(--navy-soft)}
+  footer .rights{margin-top:6px}
+
+  @media (max-width:640px){
+    .controls{padding:12px 14px} main{padding:14px 14px 30px}
+    header,.summary,footer{padding-left:14px; padding-right:14px}
+    .field,select,input[type=search]{min-width:0; width:100%}
+    .field{flex:1 1 100%}
+  }
+  @media print{
+    .controls,.summary .btn,.more{display:none}
+    body{background:#fff} .col{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Standards Browser</h1>
+  <p>Pick a subject and grade to see how Texas, Florida, Mississippi and Puerto Rico
+     each state it. Every standard is reproduced word-for-word from the authority that
+     published it, and links back to its source.</p>
+</header>
+
+<div class="controls">
+  <div class="field">
+    <label for="subject">Subject</label>
+    <select id="subject"></select>
+  </div>
+  <div class="field">
+    <label for="grade">Grade</label>
+    <select id="grade"></select>
+  </div>
+  <div class="field" style="flex:1 1 240px">
+    <label for="q">Search within results</label>
+    <input type="search" id="q" placeholder="a word, or a code like ELA.9.C.1.2" autocomplete="off">
+  </div>
+  <div class="field" style="flex:1 1 100%">
+    <label>Show</label>
+    <div class="jbar" id="jbar"></div>
+  </div>
+</div>
+
+<div class="summary" id="summary" hidden>
+  <span id="counts"></span>
+  <span class="spacer"></span>
+  <button class="btn" id="copy">Copy bundle</button>
+  <button class="btn" id="csv">Download CSV</button>
+  <button class="btn" id="md">Download Markdown</button>
+  <button class="btn primary" id="json">Download JSON</button>
+</div>
+
+<main>
+  <div class="state" id="state">
+    <h2>Loading standards…</h2>
+    <p>28,735 standards across four jurisdictions. One-time download, about 1&nbsp;MB.</p>
+    <div class="bar"><i></i></div>
+  </div>
+  <div class="cols" id="cols" hidden></div>
+</main>
+
+<footer id="foot" hidden></footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var PAGE = 250;                 // standards rendered per course before "show more"
+  var DATA = null, BY_COURSE = new Map(), state = { shown: {} };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+
+  // ---- load -------------------------------------------------------------
+  fetch("standards-data.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (d) { DATA = d; boot(); })
+    .catch(function (e) {
+      $("state").innerHTML =
+        "<h2>Could not load the standards data</h2><p>" + esc(e.message) +
+        "</p><p>If this is embedded in Canvas, open the page directly to check " +
+        "whether the network is blocking it.</p>";
+    });
+
+  function boot() {
+    DATA.standards.forEach(function (s) {
+      var a = BY_COURSE.get(s[0]);
+      if (!a) { a = []; BY_COURSE.set(s[0], a); }
+      a.push(s);
+    });
+
+    fill($("subject"), DATA.subjects);
+    fill($("grade"), DATA.grades.map(function (g) {
+      return [g, g === "ungraded" ? "Ungraded" : (g === "K" ? "Kindergarten" : "Grade " + g)];
+    }));
+
+    // Default to a selection that actually has several jurisdictions in it, so
+    // the tool opens showing its point rather than an empty frame.
+    var best = null;
+    DATA.subjects.forEach(function (sub) {
+      DATA.grades.forEach(function (g) {
+        var cs = pick(sub, g);
+        var js = new Set(cs.map(function (c) { return c.j; }));
+        var score = js.size * 1000 + cs.length;
+        if (js.size > 1 && (!best || score > best.score)) {
+          best = { sub: sub, g: g, score: score };
+        }
+      });
+    });
+    $("subject").value = best ? best.sub : DATA.subjects[0];
+    $("grade").value = best ? best.g : DATA.grades[0];
+
+    Object.keys(DATA.jurisdictions).forEach(function (j) {
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.dataset.j = j;
+      b.setAttribute("aria-pressed", "true");
+      b.textContent = DATA.jurisdictions[j];
+      b.addEventListener("click", function () {
+        b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true");
+        render();
+      });
+      $("jbar").appendChild(b);
+    });
+
+    ["subject", "grade"].forEach(function (id) {
+      $(id).addEventListener("change", function () { state.shown = {}; render(); });
+    });
+    var t;
+    $("q").addEventListener("input", function () {
+      clearTimeout(t); t = setTimeout(render, 160);
+    });
+
+    $("copy").addEventListener("click", copyBundle);
+    $("csv").addEventListener("click", function () { dl("csv"); });
+    $("md").addEventListener("click", function () { dl("md"); });
+    $("json").addEventListener("click", function () { dl("json"); });
+
+    $("state").hidden = true;
+    $("cols").hidden = false;
+    $("summary").hidden = false;
+    $("foot").hidden = false;
+    render();
+  }
+
+  function fill(sel, items) {
+    sel.innerHTML = items.map(function (it) {
+      var v = Array.isArray(it) ? it[0] : it, l = Array.isArray(it) ? it[1] : it;
+      return '<option value="' + esc(v) + '">' + esc(l) + "</option>";
+    }).join("");
+  }
+
+  function pick(sub, g) {
+    return DATA.courses.filter(function (c) {
+      return c.subj === sub && c.gk.indexOf(g) !== -1;
+    });
+  }
+
+  function activeJ() {
+    return Array.prototype.filter
+      .call(document.querySelectorAll("#jbar .chip"), function (b) {
+        return b.getAttribute("aria-pressed") === "true";
+      })
+      .map(function (b) { return b.dataset.j; });
+  }
+
+  // ---- current selection -------------------------------------------------
+  function selection() {
+    var sub = $("subject").value, g = $("grade").value;
+    var q = $("q").value.trim().toLowerCase();
+    var courses = pick(sub, g);
+    var byJ = {};
+    courses.forEach(function (c) {
+      var rows = (BY_COURSE.get(c.i) || []);
+      if (q) {
+        rows = rows.filter(function (s) {
+          return (s[1] && s[1].toLowerCase().indexOf(q) !== -1) ||
+                 (s[2] && s[2].toLowerCase().indexOf(q) !== -1);
+        });
+      }
+      if (!rows.length) return;
+      (byJ[c.j] = byJ[c.j] || []).push({ course: c, rows: rows });
+    });
+    return { sub: sub, grade: g, q: q, byJ: byJ };
+  }
+
+  // ---- render ------------------------------------------------------------
+  function render() {
+    var sel = selection(), js = activeJ(), cols = $("cols");
+    cols.innerHTML = "";
+
+    var totalStd = 0, totalCourses = 0, jWith = 0;
+    Object.keys(sel.byJ).forEach(function (j) {
+      sel.byJ[j].forEach(function (b) { totalStd += b.rows.length; totalCourses++; });
+      jWith++;
+    });
+
+    var gLabel = sel.grade === "K" ? "Kindergarten"
+      : sel.grade === "ungraded" ? "ungraded courses" : "grade " + sel.grade;
+    $("counts").innerHTML =
+      "<b>" + totalStd.toLocaleString() + "</b> standards · <b>" + totalCourses +
+      "</b> courses · <b>" + jWith + "</b> of 4 jurisdictions" +
+      (sel.q ? ' · filtered by "<b>' + esc(sel.q) + "</b>\"" : "");
+
+    var any = false;
+    js.forEach(function (j) {
+      var bundles = sel.byJ[j];
+      if (!bundles) return;
+      any = true;
+      cols.appendChild(colEl(j, bundles, sel.q));
+    });
+
+    if (!any) {
+      cols.innerHTML = '<div class="empty">No standards match this combination.' +
+        (sel.q ? " Try clearing the search." : " Try another grade, or switch a jurisdiction back on.") +
+        "</div>";
+    }
+    foot(sel);
+  }
+
+  function colEl(j, bundles, q) {
+    var n = bundles.reduce(function (a, b) { return a + b.rows.length; }, 0);
+    var structureOnly = bundles.some(function (b) { return !b.course.textOnly; });
+
+    var el = document.createElement("section");
+    el.className = "col";
+    el.innerHTML = "<h2>" + esc(DATA.jurisdictions[j]) +
+      '<span class="n">' + n.toLocaleString() + " standard" + (n === 1 ? "" : "s") + "</span></h2>";
+
+    if (structureOnly) {
+      var src = bundles[0].rows.find(function (r) { return r[5] && r[5].src; });
+      el.insertAdjacentHTML("beforeend",
+        '<p class="notice"><strong>Codes and structure only.</strong> ' +
+        "Puerto Rico's Department of Education reserves the rights to its wording, " +
+        "so the text is not reproduced here. " +
+        (src ? '<a href="' + esc(src[5].src) + '" target="_blank" rel="noopener">Read it at PRDE →</a>' : "") +
+        "</p>");
+    }
+
+    bundles.forEach(function (b) {
+      var c = b.course;
+      var key = j + ":" + c.i;
+      var limit = state.shown[key] || PAGE;
+      var rows = b.rows.slice(0, limit);
+
+      var head = '<h3>' + esc(c.title || c.subjPub) +
+        "<small>" + esc(c.fw || "") + (c.ref ? " · " + esc(c.ref) : "") +
+        (c.adopted ? " · adopted " + esc(c.adopted) : "") +
+        (c.url ? ' · <a href="' + esc(c.url) + '" target="_blank" rel="noopener">source</a>' : "") +
+        "</small></h3>";
+
+      var lis = rows.map(function (s) { return liEl(s, q); }).join("");
+      var more = b.rows.length > limit
+        ? '<button class="more" data-key="' + esc(key) + '">Show the remaining ' +
+          (b.rows.length - limit).toLocaleString() + "</button>"
+        : "";
+
+      var wrap = document.createElement("div");
+      wrap.className = "course";
+      wrap.innerHTML = head + '<ol class="std">' + lis + "</ol>" + more;
+      el.appendChild(wrap);
+    });
+
+    Array.prototype.forEach.call(el.querySelectorAll(".more"), function (btn) {
+      btn.addEventListener("click", function () {
+        state.shown[btn.dataset.key] = (state.shown[btn.dataset.key] || PAGE) + 1000;
+        render();
+      });
+    });
+    return el;
+  }
+
+  function hl(text, q) {
+    var t = esc(text);
+    if (!q) return t;
+    var i = text.toLowerCase().indexOf(q);
+    if (i < 0) return t;
+    return esc(text.slice(0, i)) + "<mark>" + esc(text.slice(i, i + q.length)) +
+           "</mark>" + esc(text.slice(i + q.length));
+  }
+
+  function liEl(s, q) {
+    var code = s[1], text = s[2], strand = s[4], x = s[5] || {};
+    var out = '<li><span class="code">' + hl(code, q) + "</span>";
+
+    if (text) {
+      out += '<p class="txt">' + hl(text, q) + "</p>";
+    } else if (x.withheld) {
+      out += '<p class="txt"><a class="linkout" href="' + esc(x.src) +
+             '" target="_blank" rel="noopener">Read the wording at PRDE →</a></p>';
+    } else if (x.absent) {
+      out += '<p class="txt" style="color:var(--muted)"><em>This identifier is ' +
+             "referenced by its sub-standards but its own text does not appear " +
+             "anywhere in the published document.</em></p>";
+    }
+
+    var tags = [];
+    if (strand) tags.push('<span class="tag">' + esc(strand) + "</span>");
+    if (x.tt) tags.push('<span class="tag tt">' + esc(x.tt) + " text</span>");
+    if (x.rel) tags.push('<span class="tag' + (x.rel === "Major" ? " major" : "") + '">' + esc(x.rel) + "</span>");
+    if (x.arch) tags.push('<span class="tag arch">Archived</span>');
+    if (x.flag) tags.push('<span class="tag flag" title="' + esc(x.flag) + '">Source anomaly</span>');
+    if (tags.length) out += '<div class="meta">' + tags.join("") + "</div>";
+
+    if (x.c && x.c.length) {
+      out += '<details class="extra"><summary>Clarifications (' + x.c.length + ")</summary><ul>" +
+        x.c.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></details>";
+    }
+    if (x.o && x.o.length) {
+      out += '<details class="extra"><summary>Objectives (' + x.o.length + ")</summary><ul>" +
+        x.o.map(function (o) { return "<li>" + esc(o) + "</li>"; }).join("") + "</ul></details>";
+    }
+    return out + "</li>";
+  }
+
+  function foot(sel) {
+    var rights = Object.keys(DATA.rights).map(function (k) {
+      return "<strong>" + esc(DATA.jurisdictions[k] || k) + ":</strong> " + esc(DATA.rights[k]);
+    }).join(" · ");
+    $("foot").innerHTML =
+      "Standards are reproduced verbatim from each authority's own published document; " +
+      "every course links to its source. Where a published document contradicts itself, " +
+      "the record is kept exactly as printed and flagged rather than corrected." +
+      '<div class="rights">' + rights + "</div>" +
+      '<div class="rights">Data generated ' + esc(DATA.generated) + ".</div>";
+  }
+
+  // ---- export ------------------------------------------------------------
+  function flat() {
+    var sel = selection(), js = activeJ(), rows = [];
+    js.forEach(function (j) {
+      (sel.byJ[j] || []).forEach(function (b) {
+        b.rows.forEach(function (s) {
+          rows.push({
+            jurisdiction: DATA.jurisdictions[j],
+            framework: b.course.fw,
+            course: b.course.title,
+            grade: b.course.grade,
+            code: s[1],
+            text: s[2] || ((s[5] && s[5].withheld) ? "[wording not reproduced — see source_url]" : ""),
+            strand: s[4] || "",
+            source_url: (s[5] && s[5].src) || b.course.url || ""
+          });
+        });
+      });
+    });
+    return { sel: sel, rows: rows };
+  }
+
+  function stamp(sel) {
+    return (sel.sub + "-" + sel.grade).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  function save(name, mime, body) {
+    var b = new Blob([body], { type: mime + ";charset=utf-8" });
+    var u = URL.createObjectURL(b), a = document.createElement("a");
+    a.href = u; a.download = name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(u); }, 1000);
+  }
+
+  function dl(kind) {
+    var f = flat(), name = "standards-" + stamp(f.sel);
+    if (kind === "json") {
+      save(name + ".json", "application/json", JSON.stringify({
+        subject: f.sel.sub, grade: f.sel.grade,
+        generated: DATA.generated, note: DATA.note, standards: f.rows
+      }, null, 2));
+    } else if (kind === "csv") {
+      var cols = ["jurisdiction", "framework", "course", "grade", "code", "text", "strand", "source_url"];
+      var q = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
+      save(name + ".csv", "text/csv",
+        "﻿" + cols.join(",") + "\r\n" +
+        f.rows.map(function (r) { return cols.map(function (c) { return q(r[c]); }).join(","); }).join("\r\n"));
+    } else {
+      save(name + ".md", "text/markdown", md(f));
+    }
+  }
+
+  function md(f) {
+    var by = {};
+    f.rows.forEach(function (r) { (by[r.jurisdiction] = by[r.jurisdiction] || []).push(r); });
+    var gl = f.sel.grade === "K" ? "Kindergarten" : "Grade " + f.sel.grade;
+    var out = "# " + f.sel.sub + " — " + gl + "\n\n" +
+      "Generated " + DATA.generated + ". " + DATA.note + "\n";
+    Object.keys(by).forEach(function (j) {
+      out += "\n## " + j + "\n";
+      var course = null;
+      by[j].forEach(function (r) {
+        if (r.course !== course) {
+          course = r.course;
+          out += "\n### " + course + "\n\n";
+        }
+        out += "- **" + r.code + "** — " + (r.text || "") +
+               (r.source_url ? "  \n  <" + r.source_url + ">" : "") + "\n";
+      });
+    });
+    return out;
+  }
+
+  function copyBundle() {
+    var f = flat();
+    var txt = f.rows.map(function (r) {
+      return r.jurisdiction + "\t" + r.code + "\t" + (r.text || "");
+    }).join("\n");
+    var done = function (ok) {
+      var b = $("copy"), was = b.textContent;
+      b.textContent = ok ? "Copied " + f.rows.length + " standards" : "Copy failed";
+      setTimeout(function () { b.textContent = was; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { done(document.execCommand("copy")); } catch (e) { done(false); }
+      document.body.removeChild(ta);
+    }
+  }
+})();
+</script>
+</body>
+</html>
