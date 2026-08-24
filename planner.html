@@ -614,8 +614,7 @@ function drawModuleDoc(t){
   for(var w2=1;w2<=n;w2++){
     h+="<tr><td><strong>"+w2+"</strong></td>"+MOD.tracks.map(function(x){
       var v=MOD.cells[w2+"|"+x.id]||"";if(v)anyCell=true;
-      return "<td>"+(v?esc(v).replace(/
-/g,"<br>"):'<span style="color:#b6c3ce">—</span>')+"</td>"}).join("")+"</tr>";
+      return "<td>"+(v?esc(v).split(String.fromCharCode(10)).join("<br>"):'<span style="color:#b6c3ce">—</span>')+"</td>"}).join("")+"</tr>";
   }
   h+="</table>";
   if(!anyCell) h+='<div class="slot">Fill the grid on the <strong>Week by week</strong> tab. Write a standard code into a cell and it will show as covered below.</div>';
@@ -690,8 +689,7 @@ function drawPrompt(t){
     L.push("");
     L.push("WEEK BY WEEK AS PLANNED (fill gaps, do not overwrite what is here):");
     for(var w=1;w<=n;w++){
-      var bits=MOD.tracks.map(function(t){var v=MOD.cells[w+"|"+t.id];return v?(t.name+": "+v.replace(/
-/g," ")):null})
+      var bits=MOD.tracks.map(function(t){var v=MOD.cells[w+"|"+t.id];return v?(t.name+": "+v.split(String.fromCharCode(10)).join(" ")):null})
         .filter(Boolean);
       L.push("  Week "+w+" ("+phaseOf(w,n)+")"+(bits.length?" — "+bits.join(" | "):" — not yet planned"));
     }
