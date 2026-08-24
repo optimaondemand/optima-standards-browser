@@ -20,13 +20,11 @@
     background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
   }
 
-  header{background:var(--navy); color:#fff; padding:15px 20px 14px;
-         display:flex; align-items:baseline; gap:14px; flex-wrap:wrap}
-  header h1{margin:0; font-size:19px; font-weight:600; letter-spacing:.2px}
-  header .jur{font-size:12.5px; color:#8fa9bf; letter-spacing:.3px}
-
+  /* No page header: the controls are the top of the tool. When this is embedded
+     as a tab, the surrounding page already names it; standalone, the <title>
+     does. A title bar inside the frame would just be chrome repeating itself. */
   .controls{
-    background:var(--navy-deep); padding:14px 20px 16px;
+    background:var(--navy-deep); padding:16px 20px;
     display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
   }
   .field{display:flex; flex-direction:column; gap:5px; min-width:150px}
@@ -131,7 +129,7 @@
 
   @media (max-width:640px){
     .controls{padding:12px 14px} main{padding:14px 14px 30px}
-    header,.summary,footer{padding-left:14px; padding-right:14px}
+    .summary,footer{padding-left:14px; padding-right:14px}
     .field,select,input[type=search]{min-width:0; width:100%}
     .field{flex:1 1 100%}
   }
@@ -142,11 +140,6 @@
 </style>
 </head>
 <body>
-
-<header>
-  <h1>Standards Browser</h1>
-  <span class="jur">Texas · Florida · Mississippi · Puerto Rico</span>
-</header>
 
 <div class="controls">
   <div class="field">
