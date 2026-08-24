@@ -164,7 +164,7 @@
   </div>
   <div class="pane" data-p="plan" data-on="true"><div class="doc" id="doc"></div></div>
   <div class="pane" data-p="weeks">
-    <p class="hint">Arcs run down the weeks the way your module maps do — reading, craft, grammar, memory, VR. Rename a track, add one, or drop one. Type straight into the grid.</p>
+    <p class="hint">Tracks run down the weeks the way your module maps do — reading, craft, grammar, memory, VR. Rename one, add one, or drop one. Type straight into the grid.</p>
     <div id="trackBar" style="margin-bottom:12px"></div>
     <div style="overflow-x:auto"><table class="grid" id="weekGrid"></table></div>
   </div>
@@ -290,7 +290,7 @@ var TPL={
           "How work is shown and responded to."]}
  ],
  module:[
-  {id:"arc",name:"Module arc — several tools across the weeks",tools:["attention","narration","memory","imitation"],
+  {id:"arc",name:"Several tools across the weeks",tools:["attention","narration","memory","imitation"],
    blurb:"Over a module all the major tools should appear; in any one lesson, three or four well used beat all of them sketched.",
    steps:["Week 1 — encounter and narration.",
           "Week 2 — memory work introduced; skills practice.",
@@ -318,14 +318,6 @@ var MOD={tracks:[
 ],cells:{},seq:7};
 
 function weeks(){return Math.max(1,Math.min(20,+$("weeks").value||9))}
-/* Phases follow the module maps: the arc moves from absorbing, through
-   analysing, to composing -- the trivium used as a shape within one module,
-   not as a fixed grade band. */
-function phaseOf(w,total){
-  var a=Math.ceil(total*0.4),b=Math.ceil(total*0.75);
-  return w<=a?"Discovery · Grammar":(w<=b?"Analysis · Logic":"Production · Rhetoric");
-}
-
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
@@ -443,10 +435,10 @@ function drawTracks(){
 }
 
 function drawGrid(){
-  var n=weeks(),h="<tr><th class='wk'>Wk</th><th>Phase</th>"+
+  var n=weeks(),h="<tr><th class='wk'>Wk</th>"+
     MOD.tracks.map(function(t){return "<th>"+esc(t.name)+"</th>"}).join("")+"</tr>";
   for(var w=1;w<=n;w++){
-    h+="<tr><td class='wk'>"+w+"</td><td class='ph'>"+esc(phaseOf(w,n))+"</td>"+
+    h+="<tr><td class='wk'>"+w+"</td>"+
       MOD.tracks.map(function(t){
         var k=w+"|"+t.id;
         return "<td><textarea data-cell='"+k+"'>"+esc(MOD.cells[k]||"")+"</textarea></td>"}).join("")+"</tr>";
@@ -597,16 +589,7 @@ function drawModuleDoc(t){
   if($("rhythm").value)
     h+="<h3>Weekly rhythm</h3><p>"+esc($("rhythm").value)+"</p>";
 
-  h+="<h3>The arc</h3><table><tr><th>Phase</th><th>Weeks</th><th>What students are doing</th></tr>";
-  var seen={},order=[];
-  for(var w=1;w<=n;w++){var ph=phaseOf(w,n);if(!seen[ph]){seen[ph]=[];order.push(ph)}seen[ph].push(w)}
-  var doing={"Discovery · Grammar":"Absorbing — encountering the text, gathering, memorising.",
-             "Analysis · Logic":"Analysing — comparing, tracing causes, arguing a first position.",
-             "Production · Rhetoric":"Composing — assembling, drafting, defending, performing."};
-  order.forEach(function(ph){
-    h+="<tr><td><strong>"+esc(ph)+"</strong></td><td>"+seen[ph][0]+"–"+seen[ph][seen[ph].length-1]+
-       "</td><td>"+esc(doing[ph])+"</td></tr>"});
-  h+="</table>";
+  h+="<h3>Shape</h3><ol>"+tpl.steps.map(function(x){return "<li>"+esc(x)+"</li>"}).join("")+"</ol>";
 
   h+="<h3>Week by week</h3><table><tr><th>Wk</th>"+
      MOD.tracks.map(function(x){return "<th>"+esc(x.name)+"</th>"}).join("")+"</tr>";
@@ -691,7 +674,7 @@ function drawPrompt(t){
     for(var w=1;w<=n;w++){
       var bits=MOD.tracks.map(function(t){var v=MOD.cells[w+"|"+t.id];return v?(t.name+": "+v.split(String.fromCharCode(10)).join(" ")):null})
         .filter(Boolean);
-      L.push("  Week "+w+" ("+phaseOf(w,n)+")"+(bits.length?" — "+bits.join(" | "):" — not yet planned"));
+      L.push("  Week "+w+(bits.length?" — "+bits.join(" | "):" — not yet planned"));
     }
     L.push("");
     var un=coverage().filter(function(c){return !c.weeks.length});
