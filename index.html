@@ -20,9 +20,10 @@
     background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
   }
 
-  header{background:var(--navy); color:#fff; padding:18px 20px 16px}
-  header h1{margin:0 0 4px; font-size:19px; font-weight:600; letter-spacing:.2px}
-  header p{margin:0; font-size:13px; color:#b9cbdb; max-width:70ch}
+  header{background:var(--navy); color:#fff; padding:15px 20px 14px;
+         display:flex; align-items:baseline; gap:14px; flex-wrap:wrap}
+  header h1{margin:0; font-size:19px; font-weight:600; letter-spacing:.2px}
+  header .jur{font-size:12.5px; color:#8fa9bf; letter-spacing:.3px}
 
   .controls{
     background:var(--navy-deep); padding:14px 20px 16px;
@@ -84,6 +85,8 @@
   .course > h3 small{display:block; font-weight:400; color:var(--muted); font-size:11.5px; margin-top:2px}
   .course > h3 a{color:var(--muted); text-decoration:none; border-bottom:1px dotted currentColor}
   .course > h3 a:hover{color:var(--navy)}
+  .course > h3 a.dl{color:var(--navy-soft); font-weight:600; border-bottom:1px solid var(--cyan)}
+  .course > h3 a.dl:hover{color:var(--navy); background:#eaf9fb}
 
   ol.std{list-style:none; margin:0; padding:0}
   ol.std > li{padding:9px 14px; border-bottom:1px solid #eef2f5}
@@ -142,9 +145,7 @@
 
 <header>
   <h1>Standards Browser</h1>
-  <p>Pick a subject and grade to see how Texas, Florida, Mississippi and Puerto Rico
-     each state it. Every standard is reproduced word-for-word from the authority that
-     published it, and links back to its source.</p>
+  <span class="jur">Texas · Florida · Mississippi · Puerto Rico</span>
 </header>
 
 <div class="controls">
@@ -374,10 +375,21 @@
       var limit = state.shown[key] || PAGE;
       var rows = b.rows.slice(0, limit);
 
+      // The PDF is a local copy and is listed first on purpose: an authority's
+      // own site can be down (mdek12.org was returning 502 across its whole
+      // domain the day this shipped) and the tool should not depend on it.
+      var links = [];
+      if (c.pdf) {
+        links.push('<a class="dl" href="' + esc(c.pdf) + '" download>PDF</a>');
+      }
+      if (c.url) {
+        links.push('<a href="' + esc(c.url) + '" target="_blank" rel="noopener">' +
+                   (c.pdf ? "publisher" : "read at source") + "</a>");
+      }
       var head = '<h3>' + esc(c.title || c.subjPub) +
         "<small>" + esc(c.fw || "") + (c.ref ? " · " + esc(c.ref) : "") +
         (c.adopted ? " · adopted " + esc(c.adopted) : "") +
-        (c.url ? ' · <a href="' + esc(c.url) + '" target="_blank" rel="noopener">source</a>' : "") +
+        (links.length ? " · " + links.join(" · ") : "") +
         "</small></h3>";
 
       var lis = rows.map(function (s) { return liEl(s, q); }).join("");

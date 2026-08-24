@@ -11,6 +11,7 @@ side, with every standard linking back to the authority that published it.
 - **Subject + grade → every jurisdiction at once.** Toggle jurisdictions on and off.
 - **Search within the results** by word or by code (`ELA.9.C.1.2`, `110.22(b)(3)`).
 - **Take the bundle away** — copy to clipboard, or download CSV, Markdown or JSON.
+- **Download the authority's own PDF** for any course, straight from this repo.
 - **Florida clarifications** and **Mississippi objectives** are there, collapsed
   under each standard.
 - Flags are shown rather than hidden: archived standards, "Major/Supporting"
@@ -36,6 +37,21 @@ quietly corrected — a corrected standard is indistinguishable from an invented
 **Puerto Rico:** PRDE asserts copyright over its wording, so this tool shows PR's
 codes, hierarchy, strands and text-type variants but not PRDE's text. Each record
 links out to PRDE's own document instead. That is deliberate, not a gap in the data.
+
+### Source PDFs
+
+`sources/` holds the authority's own published PDF for every Texas, Florida and
+Mississippi course — 166 files, about 43 MB — and each course in the tool has a
+**PDF** link that downloads it. Two reasons to keep local copies rather than
+linking out only:
+
+1. Teachers want the document itself, not just the extracted text.
+2. An authority's site being down must not break the tool. `mdek12.org` was
+   returning 502 across its entire domain the day this shipped, which is exactly
+   the failure a local copy absorbs.
+
+Every course also keeps a **publisher** link to the authority's own page, so the
+canonical version is always one click away. No Puerto Rico PDF is stored here.
 
 Also worth knowing when comparing: PR's English Program is a **second-language**
 English curriculum, not the analogue of mainland ELA. It appears under
