@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson Planning — prototype</title>
+<style>
+  :root{
+    --navy:#0d2b45; --navy-deep:#081c2e; --navy-soft:#1b3f60;
+    --cyan:#2ec4d6; --gold:#f2b544;
+    --ink:#16202b; --muted:#5d6b7a; --line:#dde4ea; --bg:#f4f7f9; --card:#fff;
+    --ok:#1c7a4a; --warn:#8a5a00; --bad:#a12b2b;
+    --mono:"Cascadia Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  .proto{background:var(--gold);color:#2a1d00;padding:7px 20px;font-size:12.5px;font-weight:600}
+  .wrap{display:grid;grid-template-columns:minmax(320px,420px) 1fr;gap:0;align-items:start}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+
+  .panel{background:var(--navy-deep);color:#dbe6ef;padding:16px 18px 26px;min-height:100vh}
+  .panel h2{margin:20px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--cyan)}
+  .panel h2:first-child{margin-top:0}
+  label.f{display:block;margin-bottom:9px;font-size:13px}
+  label.f > span{display:block;margin-bottom:4px;color:#9fb6c9;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}
+  select,input,textarea{font:inherit;font-size:14px;width:100%;padding:7px 9px;border-radius:5px;border:1px solid #2c4d6e;background:#0f3352;color:#fff}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--cyan);outline-offset:1px}
+  .two{display:flex;gap:9px}.two>*{flex:1}
+  .seg{display:flex;gap:0;border:1px solid #2c4d6e;border-radius:6px;overflow:hidden}
+  .seg button{flex:1;font:inherit;font-size:13px;padding:8px 4px;border:none;background:transparent;color:#c8d8e6;cursor:pointer}
+  .seg button[aria-pressed=true]{background:var(--cyan);color:#04212b;font-weight:600}
+  .checks{max-height:230px;overflow:auto;border:1px solid #2c4d6e;border-radius:6px;padding:7px 9px;background:#0b2b45}
+  .checks label{display:flex;gap:7px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
+  .checks input{width:auto;margin-top:3px;flex:none}
+  .checks .c{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+  .jhead{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--cyan);margin:8px 0 3px;font-weight:700}
+  .tools label{display:flex;gap:7px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
+  .tools input{width:auto;flex:none;margin-top:3px}
+  .tools small{display:block;color:#8fa9bf;font-size:11.5px}
+  .row{display:flex;gap:7px;margin-bottom:6px;align-items:center}
+  .row select{flex:0 0 128px}.row input.lbl{flex:1}.row input.num{flex:0 0 62px;text-align:center}
+  .row button{flex:none;background:transparent;border:1px solid #2c4d6e;color:#9fb6c9;border-radius:5px;cursor:pointer;padding:6px 9px;font:inherit}
+  .add{width:100%;margin-top:2px;background:transparent;border:1px dashed #2c4d6e;color:#9fb6c9;padding:7px;border-radius:6px;cursor:pointer;font:inherit;font-size:13px}
+  .budget{margin-top:10px;background:#0b2b45;border:1px solid #2c4d6e;border-radius:6px;padding:10px 11px;font-size:13px}
+  .budget .big{font-size:20px;font-weight:600;color:#fff}
+  .budget .flag{margin-top:7px;padding:7px 9px;border-radius:5px;font-size:12.5px;line-height:1.45}
+  .flag.ok{background:#0d3b28;color:#8ee0b4}
+  .flag.warn{background:#3d3208;color:#f0cd7a}
+  .flag.bad{background:#3d1616;color:#f0a0a0}
+
+  main{padding:0 0 40px}
+  .tabs{display:flex;gap:0;background:var(--navy);padding:0 18px}
+  .tabs button{font:inherit;font-size:13.5px;font-weight:600;padding:12px 15px;border:none;background:transparent;color:#9fb6c9;cursor:pointer;border-bottom:3px solid transparent}
+  .tabs button[aria-selected=true]{color:#fff;border-bottom-color:var(--cyan)}
+  .tabbar{display:flex;justify-content:space-between;align-items:center;background:var(--navy)}
+  .acts{padding-right:16px;display:flex;gap:7px}
+  .acts button{font:inherit;font-size:12.5px;padding:6px 11px;border-radius:5px;border:1px solid #2c4d6e;background:transparent;color:#cfe0ec;cursor:pointer;font-weight:600}
+  .acts button:hover{border-color:var(--cyan);color:#fff}
+  .pane{display:none;padding:18px}
+  .pane[data-on=true]{display:block}
+  .doc{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:26px 30px;max-width:900px}
+  .doc h1{font-size:21px;margin:0 0 3px;color:var(--navy)}
+  .doc .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .doc h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--navy-soft);margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--cyan)}
+  .doc p{margin:0 0 9px}
+  .doc ul,.doc ol{margin:0 0 9px;padding-left:20px}.doc li{margin-bottom:5px}
+  .doc table{border-collapse:collapse;width:100%;font-size:13.5px;margin-bottom:10px}
+  .doc th,.doc td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  .doc th{background:#f2f6f9;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy-soft)}
+  .doc code{font-family:var(--mono);font-size:12px;background:#eaf1f6;padding:1px 5px;border-radius:3px;color:var(--navy)}
+  .doc .slot{background:#fff8e8;border-left:3px solid var(--gold);padding:7px 11px;margin:0 0 9px;font-size:13.5px}
+  .doc .rule{background:#f2f6f9;border-left:3px solid var(--navy-soft);padding:7px 11px;margin:0 0 9px;font-size:13px;color:#33414f}
+  pre.prompt{background:#0b2b45;color:#dbe6ef;padding:18px 20px;border-radius:9px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:900px;margin:0}
+  .hint{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:70ch}
+  .empty{padding:40px 18px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="proto">Prototype — shows what a standalone planner can do with no API key. Everything below is generated from your own skills and the standards corpus.</div>
+
+<div class="wrap">
+<aside class="panel">
+
+  <h2>Standards</h2>
+  <div class="two">
+    <label class="f"><span>Subject</span><select id="subject"></select></label>
+    <label class="f"><span>Grade</span><select id="grade"></select></label>
+  </div>
+  <div class="checks" id="stdList"><div style="color:#8fa9bf;font-size:13px">Loading…</div></div>
+
+  <h2>Artifact</h2>
+  <label class="f"><span>What are you making</span>
+    <select id="artifact">
+      <option value="module">Module plan (teacher-facing)</option>
+      <option value="lesson" selected>Lesson plan (teacher-facing)</option>
+      <option value="activity">Activity plan (teacher-facing)</option>
+      <option value="vr">VR space handout (student-facing)</option>
+    </select></label>
+  <label class="f"><span>Working title</span><input id="title" placeholder="e.g. Fractions as division"></label>
+  <div class="two">
+    <label class="f"><span>Trivium stage</span><select id="stage">
+      <option value="Grammar">Grammar</option><option value="Logic">Logic</option><option value="Rhetoric">Rhetoric</option>
+    </select></label>
+    <label class="f"><span>Length</span><input id="len" value="1 week"></label>
+  </div>
+
+  <h2>Delivery</h2>
+  <div class="seg" id="mode">
+    <button type="button" data-m="ondemand" aria-pressed="true">On-Demand</button>
+    <button type="button" data-m="live" aria-pressed="false">Live</button>
+  </div>
+  <label class="f" style="margin-top:9px"><span>Students the teacher serves</span><input id="roster" type="number" value="500" min="1"></label>
+
+  <h2>Classical tools</h2>
+  <div class="tools" id="tools"></div>
+
+  <h2>Assessment</h2>
+  <div id="items"></div>
+  <button class="add" id="addItem" type="button">+ Add an assessed item</button>
+  <div class="budget" id="budget"></div>
+
+</aside>
+
+<main>
+  <div class="tabbar">
+    <div class="tabs" role="tablist">
+      <button data-p="plan" aria-selected="true">Teacher plan</button>
+      <button data-p="prompt" aria-selected="false">Prompt for Copilot</button>
+    </div>
+    <div class="acts">
+      <button id="copy">Copy</button>
+      <button id="dl">Download</button>
+    </div>
+  </div>
+  <div class="pane" data-p="plan" data-on="true"><div class="doc" id="doc"></div></div>
+  <div class="pane" data-p="prompt"><p class="hint">Paste this into Copilot or Claude. It carries the standards verbatim, your constraints, the teacher-time budget, and the house rules — so the prose comes back Optima-shaped. No API key involved.</p><pre class="prompt" id="prompt"></pre></div>
+</main>
+</div>
+
+<script>
+(function(){
+"use strict";
+var BASE="https://optimaondemand.github.io/optima-standards-browser/";
+
+// Rates come from optima-canvas-assignments. Tier 2 is ~30 s per post
+// (500 students x 30 s = ~4 h per discussion cycle); Tier 3 is ~5 min per
+// submission (500 x 5 min = ~41 h). Tier 1 and 4 cost the teacher nothing.
+var TIER={
+  1:{name:"Tier 1 — auto-graded",       min:0,   note:"Canvas quiz or completion-scored assignment"},
+  2:{name:"Tier 2 — light touch",       min:0.5, note:"discussion or survey-mode quiz"},
+  3:{name:"Tier 3 — deep feedback",     min:5,   note:"Canvas assignment with a rubric of at most 4 criteria"},
+  4:{name:"Tier 4 — ungraded scaffold", min:0,   note:"practice, no teacher time"}
+};
+var WRAPPER=20; // minutes per module to review the outro wrapper
+
+// Tools named as optima-classical-pedagogy names them. These are TEACHER-facing
+// labels; the house rule is that student-facing text never names the method.
+var TOOLS=[
+ ["Attention","single substantial reading, sustained task, uncluttered page"],
+ ["Narration","retell after reading — oral (Grammar), written paragraph (Logic), short essay (Rhetoric)"],
+ ["Copywork","copy a worthy passage exactly"],
+ ["Dictation","write from hearing, prepared in advance"],
+ ["Memorisation and recitation","a passage tied to this content, with a slot in weekly review"],
+ ["Imitation","name the model and the rung; never a bare 'write about X'"],
+ ["Copia","vary and expand expression — labelled <em>Word Study</em> for students"],
+ ["Disputed question","a real question with sides, not a five-paragraph essay"],
+ ["Socratic discussion","supply the opening questions"],
+ ["Apprenticeship","teacher works alongside, showing the craft"]
+];
+
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+
+var MAN=null,BUNDLE=null,picked={},mode="ondemand",items=[],tab="plan";
+
+fetch(BASE+"bundles-manifest.json").then(function(r){return r.json()}).then(function(m){
+  MAN=m;
+  var subs=m.subjects.slice().sort();
+  $("subject").innerHTML=subs.map(function(s){return '<option>'+esc(s)+'</option>'}).join("");
+  $("grade").innerHTML=m.grades.map(function(g){
+    return '<option value="'+esc(g)+'">'+(g==="K"?"Kindergarten":g==="ungraded"?"Ungraded":"Grade "+g)+'</option>'}).join("");
+  $("subject").value=subs.indexOf("English Language Arts")>=0?"English Language Arts":subs[0];
+  $("grade").value="6";
+  loadBundle();
+}).catch(function(e){
+  $("stdList").innerHTML='<div style="color:#f0a0a0;font-size:13px">Could not load the standards index: '+esc(e.message)+'</div>';
+});
+
+function loadBundle(){
+  var key=$("subject").value+"|"+$("grade").value;
+  var entry=MAN.index[key];
+  picked={};
+  if(!entry){BUNDLE=null;$("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">No standards published for this combination yet.</div>';render();return}
+  $("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Loading '+entry.standards+' standards…</div>';
+  fetch(BASE+entry.file).then(function(r){return r.json()}).then(function(b){BUNDLE=b;drawStds();render()});
+}
+
+function drawStds(){
+  var byJ={},ci={};
+  BUNDLE.courses.forEach(function(c){ci[c.i]=c});
+  BUNDLE.standards.forEach(function(s){var j=ci[s[0]].j;(byJ[j]=byJ[j]||[]).push(s)});
+  var names=MAN.jurisdictions,h="";
+  Object.keys(byJ).sort().forEach(function(j){
+    h+='<div class="jhead">'+esc(names[j]||j)+" · "+byJ[j].length+"</div>";
+    byJ[j].forEach(function(s){
+      var withheld=s[5]&&s[5].withheld;
+      h+='<label><input type="checkbox" data-code="'+esc(s[1])+'" data-j="'+esc(j)+'">'+
+         '<span><span class="c">'+esc(s[1])+'</span> '+
+         (withheld?'<em style="color:#8fa9bf">wording at PRDE — not reproduced</em>':esc((s[2]||"").slice(0,150)))+
+         '</span></label>';
+    });
+  });
+  $("stdList").innerHTML=h;
+  Array.prototype.forEach.call($("stdList").querySelectorAll("input"),function(cb){
+    cb.addEventListener("change",function(){
+      var code=cb.dataset.code;
+      if(cb.checked){
+        var s=BUNDLE.standards.filter(function(x){return x[1]===code})[0];
+        picked[code]={code:code,j:cb.dataset.j,text:(s&&s[2])||"",withheld:!!(s&&s[5]&&s[5].withheld)};
+      } else delete picked[code];
+      render();
+    });
+  });
+}
+
+// tools
+$("tools").innerHTML=TOOLS.map(function(t,i){
+  return '<label><input type="checkbox" data-t="'+i+'"><span>'+t[0]+'<small>'+t[1]+'</small></span></label>'}).join("");
+
+function chosenTools(){
+  return Array.prototype.filter.call($("tools").querySelectorAll("input"),function(c){return c.checked})
+    .map(function(c){return TOOLS[+c.dataset.t]});
+}
+
+// assessment rows
+function addItem(tier,label,count){
+  items.push({tier:tier||1,label:label||"",count:count||1}); drawItems(); render();
+}
+function drawItems(){
+  $("items").innerHTML=items.map(function(it,i){
+    return '<div class="row"><select data-i="'+i+'" data-k="tier">'+
+      [1,2,3,4].map(function(t){return '<option value="'+t+'"'+(it.tier===t?" selected":"")+'>Tier '+t+'</option>'}).join("")+
+      '</select><input class="lbl" data-i="'+i+'" data-k="label" value="'+esc(it.label)+'" placeholder="what it is">'+
+      '<input class="num" type="number" min="1" data-i="'+i+'" data-k="count" value="'+it.count+'">'+
+      '<button data-rm="'+i+'" type="button">×</button></div>'}).join("");
+  Array.prototype.forEach.call($("items").querySelectorAll("[data-k]"),function(el){
+    el.addEventListener("input",function(){
+      var it=items[+el.dataset.i],k=el.dataset.k;
+      it[k]=(k==="label")?el.value:+el.value; render();
+    });
+  });
+  Array.prototype.forEach.call($("items").querySelectorAll("[data-rm]"),function(b){
+    b.addEventListener("click",function(){items.splice(+b.dataset.rm,1);drawItems();render()});
+  });
+}
+
+function budget(){
+  var roster=Math.max(1,+$("roster").value||1);
+  var perStudent=0,t3=0,t2=0;
+  items.forEach(function(it){
+    var m=TIER[it.tier].min*it.count;
+    perStudent+=m;
+    if(it.tier===3)t3+=it.count;
+    if(it.tier===2)t2+=it.count;
+  });
+  var mins=perStudent*roster+WRAPPER;
+  return {roster:roster,mins:mins,hours:mins/60,perStudent:perStudent,t3:t3,t2:t2};
+}
+
+function render(){
+  var b=budget();
+  var flags=[];
+  if(b.t3>1) flags.push(["bad","More than one Tier 3 assessment. The 500:1 arithmetic does not carry two substantive teacher-graded pieces in one module — collapse them or move one to Tier 2."]);
+  if(mode==="ondemand"&&b.hours>12) flags.push(["bad","Above the 8–12 hour weekly ceiling for On-Demand. This is not sustainable at 500 students."]);
+  else if(mode==="ondemand"&&b.hours>8) flags.push(["warn","At the top of the 8–12 hour On-Demand range. Workable, but there is no slack."]);
+  if(!flags.length&&items.length) flags.push(["ok","Within budget for "+(mode==="live"?"Live":"On-Demand")+" delivery."]);
+  var nt=chosenTools().length;
+  if(nt>4) flags.push(["warn",nt+" tools selected. Three or four well used beat all of them sketched."]);
+  if(nt&&nt<3&&$("artifact").value!=="activity") flags.push(["warn","Fewer than three tools. A lesson usually carries three or four."]);
+
+  $("budget").innerHTML=
+    '<div><span class="big">'+(b.hours<1?Math.round(b.mins)+" min":b.hours.toFixed(1)+" hr")+'</span> '+
+    '<span style="color:#9fb6c9">of teacher time · '+b.perStudent.toFixed(1)+' min per student × '+b.roster+'</span></div>'+
+    flags.map(function(f){return '<div class="flag '+f[0]+'">'+f[1]+'</div>'}).join("");
+
+  drawDoc(b); drawPrompt(b);
+}
+
+function stdRows(){
+  return Object.keys(picked).map(function(k){return picked[k]});
+}
+
+function drawDoc(b){
+  var std=stdRows(),tools=chosenTools(),art=$("artifact").value,stage=$("stage").value;
+  var kinds={module:"Module plan",lesson:"Lesson plan",activity:"Activity plan",vr:"VR space handout"};
+  var title=$("title").value||"Untitled";
+  var narr={Grammar:"oral narration",Logic:"a written paragraph of narration",Rhetoric:"a short narration essay"}[stage];
+  var studentFacing=(art==="vr");
+
+  var h='<h1>'+esc(title)+'</h1><div class="sub">'+kinds[art]+" · "+esc($("subject").value)+" · "+
+    ($("grade").value==="K"?"Kindergarten":"Grade "+$("grade").value)+" · "+stage+" stage · "+esc($("len").value)+
+    " · "+(mode==="live"?"Live":"On-Demand")+"</div>";
+
+  if(studentFacing){
+    h+='<div class="rule"><strong>Student-facing document.</strong> Do not name the method anywhere in this text — teach the skill directly with a worked example and practice. Keep VR instructions platform-agnostic: describe what students do in the space, not which buttons a particular headset or platform uses.</div>';
+  }
+
+  h+="<h3>Standards addressed</h3>";
+  if(!std.length) h+='<p style="color:#5d6b7a">Tick standards on the left and they appear here, mapped to the parts of the plan.</p>';
+  else{
+    h+="<table><tr><th>Code</th><th>Standard</th></tr>"+std.map(function(s){
+      return "<tr><td><code>"+esc(s.code)+"</code></td><td>"+
+        (s.withheld?'<em style="color:#5d6b7a">PRDE reserves this wording — read it at source; not reproduced here.</em>':esc(s.text))+
+        "</td></tr>"}).join("")+"</table>";
+  }
+
+  if(tools.length){
+    h+="<h3>Tools in use</h3><ul>"+tools.map(function(t){
+      return "<li><strong>"+t[0]+"</strong> — "+t[1]+"</li>"}).join("")+"</ul>";
+    if(!studentFacing) h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method.</div>';
+  }
+
+  h+="<h3>Shape</h3><ol>"+
+     "<li><strong>Attention.</strong> One substantial reading or task. Uncluttered page.</li>"+
+     '<li><strong>Encounter.</strong> <span class="slot">Name the actual text, problem set, or artefact here. Do not invent one — this tool will not supply it.</span></li>'+
+     "<li><strong>Work.</strong> The tools above, in order.</li>"+
+     "<li><strong>Close with narration.</strong> "+narr+", by default when the lesson involves reading.</li>"+
+     "</ol>";
+
+  h+="<h3>Memory work</h3><div class=\"slot\">A passage tied to this content, with a place in the weekly review. Name it here.</div>";
+
+  h+="<h3>Assessment and teacher time</h3>";
+  if(!items.length) h+='<p style="color:#5d6b7a">Add assessed items on the left to see the teacher-time arithmetic.</p>';
+  else{
+    h+="<table><tr><th>Item</th><th>Tier</th><th>Count</th><th>Min/student</th></tr>"+
+      items.map(function(it){return "<tr><td>"+esc(it.label||"—")+"</td><td>"+TIER[it.tier].name+
+        "</td><td>"+it.count+"</td><td>"+(TIER[it.tier].min*it.count).toFixed(1)+"</td></tr>"}).join("")+
+      "<tr><td colspan=3><strong>Total for "+b.roster+" students</strong></td><td><strong>"+
+      (b.hours<1?Math.round(b.mins)+" min":b.hours.toFixed(1)+" hr")+"</strong></td></tr></table>"+
+      '<div class="rule">Graded items are Canvas-native: quizzes, discussions, and assignments with rubrics of at most four criteria. Custom components belong on in-lesson pages, not on graded items.</div>';
+  }
+  $("doc").innerHTML=h;
+}
+
+function drawPrompt(b){
+  var std=stdRows(),tools=chosenTools(),art=$("artifact").value;
+  var kinds={module:"module plan",lesson:"lesson plan",activity:"activity plan",vr:"student-facing VR space handout"};
+  var L=[];
+  L.push("Write a "+kinds[art]+" for Optima Academy Online.");
+  L.push("");
+  L.push("SUBJECT: "+$("subject").value+"   GRADE: "+$("grade").value+"   TRIVIUM STAGE: "+$("stage").value);
+  L.push("TITLE: "+($("title").value||"(choose one)")+"   LENGTH: "+$("len").value);
+  L.push("DELIVERY: "+(b.roster>100?"On-Demand (asynchronous)":"Live")+" — teacher serves "+b.roster+" students.");
+  L.push("TEACHER-TIME BUDGET: "+(b.hours<1?Math.round(b.mins)+" minutes":b.hours.toFixed(1)+" hours")+
+         " total. Do not propose work that exceeds it.");
+  L.push("");
+  L.push("STANDARDS TO ADDRESS — use these codes exactly; do not invent or alter any code:");
+  if(!std.length) L.push("  (none selected yet)");
+  std.forEach(function(s){
+    L.push("  "+s.code+" — "+(s.withheld?"[wording reserved by PRDE; consult the source document]":s.text));
+  });
+  L.push("");
+  if(tools.length){
+    L.push("CLASSICAL TOOLS TO USE (teacher-facing names):");
+    tools.forEach(function(t){L.push("  "+t[0]+" — "+t[1].replace(/<[^>]+>/g,""))});
+    L.push("");
+  }
+  L.push("HOUSE RULES:");
+  L.push("- Say teacher, never facilitator.");
+  L.push("- Name weeks, never days of the week.");
+  L.push("- Student-facing text must not name the method. Teach the skill with a worked example, then practice.");
+  L.push("- Do not invent texts, quotations, sources, or standard codes. Where a real text is needed, leave a named slot saying what is required.");
+  L.push("- Lead with a visual or a concrete example, not a wall of prose.");
+  L.push("- Graded items are Canvas-native: quizzes, discussions, assignments with rubrics of at most four criteria.");
+  L.push("- No reassurance or filler panels. Every block carries instruction.");
+  if(art==="vr") L.push("- Keep VR instructions platform-agnostic: describe what the student does in the space, not platform-specific controls.");
+  L.push("");
+  L.push("Close the lesson with narration by default when it involves reading: "+
+    ({Grammar:"oral",Logic:"a written paragraph",Rhetoric:"a short essay"}[$("stage").value])+".");
+  $("prompt").textContent=L.join("\n");
+}
+
+// wiring
+["subject","grade"].forEach(function(id){$(id).addEventListener("change",loadBundle)});
+["title","len","stage","artifact","roster"].forEach(function(id){$(id).addEventListener("input",render);$(id).addEventListener("change",render)});
+$("tools").addEventListener("change",render);
+$("addItem").addEventListener("click",function(){addItem(1,"",1)});
+Array.prototype.forEach.call($("mode").querySelectorAll("button"),function(b){
+  b.addEventListener("click",function(){
+    mode=b.dataset.m;
+    Array.prototype.forEach.call($("mode").querySelectorAll("button"),function(x){
+      x.setAttribute("aria-pressed",String(x===b))});
+    $("roster").value = mode==="live" ? 30 : 500;
+    render();
+  });
+});
+Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(b){
+  b.addEventListener("click",function(){
+    tab=b.dataset.p;
+    Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(x){x.setAttribute("aria-selected",String(x===b))});
+    Array.prototype.forEach.call(document.querySelectorAll(".pane"),function(p){p.dataset.on=String(p.dataset.p===tab)});
+  });
+});
+$("copy").addEventListener("click",function(){
+  var t = tab==="prompt" ? $("prompt").textContent : $("doc").innerText;
+  navigator.clipboard.writeText(t).then(function(){
+    var w=$("copy").textContent;$("copy").textContent="Copied";setTimeout(function(){$("copy").textContent=w},1500)});
+});
+$("dl").addEventListener("click",function(){
+  var name=($("title").value||"plan").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  var blob,fn;
+  if(tab==="prompt"){blob=new Blob([$("prompt").textContent],{type:"text/plain;charset=utf-8"});fn=name+"-prompt.txt"}
+  else{
+    blob=new Blob(['<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"></head><body>'+
+      $("doc").innerHTML+'</body></html>'],{type:"application/msword"});
+    fn=name+".doc";
+  }
+  var u=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=u;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(u)},1000);
+});
+
+addItem(1,"Reading check",1);
+addItem(3,"Narration",1);
+render();
+})();
+</script>
+</body>
+</html>
