@@ -44,6 +44,23 @@
   .tool[data-open=true] .body{display:block}
   .tool .body .vid{display:inline-block;margin-top:6px;font-size:12px;color:#8fa9bf}
 
+  .tool .fields{display:none;padding:2px 10px 10px;border-top:1px solid #21486a}
+  .tool[data-tick=true] .fields{display:block}
+  .fields .fl{display:block;margin:7px 0 0}
+  .fields .fl > span{display:block;margin-bottom:3px;color:#9fb6c9;font-size:10.5px;text-transform:uppercase;letter-spacing:.6px}
+  .fields input,.fields select,.fields textarea{font-size:13px;padding:5px 7px;background:#0d3251}
+  .fields .mx{display:flex;flex-wrap:wrap;gap:4px}
+  .fields .mx label{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:#c8d8e6;
+    border:1px solid #2c4d6e;border-radius:999px;padding:3px 9px;cursor:pointer}
+  .fields .mx label.on{background:var(--cyan);border-color:var(--cyan);color:#04212b;font-weight:600}
+  .fields .mx input{width:auto;flex:none;margin:0}
+  .grp{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:#7f97ab;margin:11px 0 4px;font-weight:700}
+  .grp:first-child{margin-top:0}
+
+  .doc table.mv th{width:33%;background:#f7fafc;text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:600}
+  .doc h4{font-size:14.5px;margin:16px 0 4px;color:var(--navy)}
+  .doc h4 + p{margin-bottom:6px}
+
   .row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
   .row input.lbl{flex:1;min-width:0}
   .row select{flex:0 0 118px}
@@ -81,7 +98,7 @@
   .doc code{font-family:var(--mono);font-size:12px;background:#eaf1f6;padding:1px 5px;border-radius:3px;color:var(--navy)}
   .doc .slot{background:#fff8e8;border-left:3px solid var(--gold);padding:7px 11px;margin:0 0 9px;font-size:13.5px}
   .doc .rule{background:#f2f6f9;border-left:3px solid var(--navy-soft);padding:7px 11px;margin:0 0 9px;font-size:13px;color:#33414f}
-  .doc .how{color:var(--muted);font-size:13px;margin:2px 0 0}
+  .doc .how{display:block;color:var(--muted);font-size:13px;margin:3px 0 0}
   pre.prompt{background:#0b2b45;color:#dbe6ef;padding:18px 20px;border-radius:9px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:920px;margin:0}
   .hint{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:72ch}
   table.grid{border-collapse:collapse;background:#fff;font-size:13px;min-width:100%}
@@ -138,8 +155,8 @@
     <label class="f"><span>Length</span><input id="len" value="1 week"></label>
   </div>
 
-  <h2>Classical tools</h2>
-  <p class="note">Ticked tools appear in the plan with guidance on how to run them. Press <strong>?</strong> for a short explanation.</p>
+  <h2>Pedagogical moves</h2>
+  <p class="note">Tick a move and its own fields open underneath. What you fill in goes into the plan as fact; what you leave blank goes in as a named slot, so nothing invents itself. Press <strong>?</strong> for how the move is run.</p>
   <div id="tools"></div>
 
   <h2>Assets needed</h2>
@@ -212,41 +229,179 @@ var TIER={
     cost:"No teacher grading time."}
 };
 
-/* Tools, named as optima-classical-pedagogy names them, each with a short
-   practical note on running it. `video` is a hook for the explainer library --
-   fill a URL in and a link appears in the plan and the panel. */
-var TOOLS=[
- {id:"attention",name:"Attention",video:"",
-  how:"Build one substantial reading or task rather than three shallow passes. Leave white space, no sidebars or interruptions competing with the text. Say plainly how long to stay with it.",
-  spec:"Read pages __ to __ without stopping, then narrate."},
- {id:"narration",name:"Narration",video:"",
-  how:"The student retells, in their own words, what was just read — after one reading, with no pre-quizzing and no telling them what to look for. It is the default comprehension exercise here, replacing worksheets.",
-  spec:"Form by stage: oral (Grammar), a written paragraph (Logic), a short essay (Rhetoric)."},
- {id:"copywork",name:"Copywork",video:"",
-  how:"The student transcribes a passage worth copying, by hand, exactly. Choose something defensible — poetry, a founding document, a line from the literature in hand. Present it cleanly with generous spacing.",
-  spec:"Keep sessions short and frequent: 5–15 minutes."},
- {id:"dictation",name:"Dictation",video:"",
-  how:"The student writes down what is read aloud, with full accuracy. Say whether it is prepared (studied first, builds confidence) or unprepared (builds attention). Dictate in meaningful phrases, never word by word.",
-  spec:"Correct gently — self-check against the printed text, not red pen."},
- {id:"memory",name:"Memorisation and recitation",video:"",
-  how:"Name the specific piece, tie it to the story or context it belongs to, and give it a place in the review cycle. Include an occasion to recite aloud — recitation is part of the assignment, not an extra.",
-  spec:"Review a little at a time across the term rather than cramming."},
- {id:"imitation",name:"Imitation",video:"",
-  how:"The student writes in the pattern of a master. Name the model and name what is being imitated — structure, voice, a figure, a genre. Diagnose which rung of the ladder this is and do not ask for a rung the course has not built.",
-  spec:"Ladder: models → memorised patterns → paraphrase → graduated exercises → original composition."},
- {id:"copia",name:"Copia",video:"",
-  how:"The student says the same thing many ways. Name the dimension to vary — vocabulary, syntax, figure, scale, or register — and give an exact count. Vary a sentence from a text worth respecting, not a synthetic one.",
-  spec:"Labelled Word Study in anything students read."},
- {id:"disputed",name:"Disputed question",video:"",
-  how:"A real question with genuine sides, argued and answered — not a five-paragraph essay wearing a Latin name. State the question, the strongest case each way, and what the student must do with it.",
-  spec:"Early forms in Logic stage; full essays in Rhetoric."},
- {id:"socratic",name:"Socratic discussion",video:"",
-  how:"Supply the opening questions in the plan. A generic instruction to discuss the topic is not this tool.",
-  spec:"Write the first three questions and where you expect the conversation to turn."},
- {id:"apprentice",name:"Apprenticeship",video:"",
-  how:"The teacher works alongside the student, showing the craft rather than describing it. Suited to studio, lab, translation, and composition.",
-  spec:"Say what the teacher demonstrates while students watch."}
+/* The pedagogical moves, named as optima-classical-pedagogy names them. Each
+   carries `how` (how it is run), `spec` (the one discipline that makes it itself
+   rather than a thinner modern imitation), and `fields` -- the things a plan has
+   to SAY about the move before it is a plan and not a label. A filled field
+   prints as fact; an empty one prints as a named slot in the document and as an
+   explicit gap in the prompt, because the tool will not invent a text.
+   `video` is a hook for the explainer library: put a URL in, a link appears.
+   Field types: text, num, area (textarea), sel (one of opts), mx (any of opts). */
+var GROUPS=[
+ {id:"read",name:"Reading and attention"},
+ {id:"lang",name:"Language and craft"},
+ {id:"mem", name:"Memory"},
+ {id:"arg", name:"Reasoning and argument"},
+ {id:"reg", name:"How the teacher works"}
 ];
+var TOOLS=[
+ {id:"attention",g:"read",name:"Attention",video:"",
+  how:"Build one substantial reading or task rather than three shallow passes. Leave white space, no sidebars or interruptions competing with the text. Say plainly how long to stay with it.",
+  spec:"Read pages __ to __ without stopping, then narrate.",
+  fields:[
+   {k:"object",l:"What they stay with",t:"text",ph:"the one text, problem or object"},
+   {k:"stretch",l:"Uninterrupted minutes",t:"num",ph:"20"},
+   {k:"removed",l:"What you are taking out of the way",t:"text",ph:"no pre-reading questions, no sidebar, no timer on screen"}
+  ]},
+ {id:"aloud",g:"read",name:"Reading aloud",video:"",
+  how:"Someone reads the text aloud while the others follow. What students hear is what they can later write, so the reading list and the read-aloud are curriculum, not preamble to it. Say who reads and how far.",
+  spec:"If narration follows, give no listening task beforehand. Not telling them what to listen for is the point.",
+  fields:[
+   {k:"reader",l:"Who reads",t:"sel",opts:["The teacher","One student","Students in turn","A recording"]},
+   {k:"passage",l:"The passage, and where it stops",t:"area",ph:"name it exactly; do not leave this to the writer"},
+   {k:"minutes",l:"Minutes aloud",t:"num",ph:"10"},
+   {k:"then",l:"What happens straight afterwards",t:"sel",opts:["Narration","Socratic discussion","Copywork from it","Straight to writing","Nothing - sit with it"]}
+  ]},
+ {id:"narration",g:"read",name:"Narration",video:"",
+  how:"The student retells, in their own words, what was just read - after one reading, with no pre-quizzing and no telling them what to look for. It is the default comprehension exercise here, replacing worksheets.",
+  spec:"Form by stage: oral (Grammar), a written paragraph (Logic), a short essay (Rhetoric).",
+  fields:[
+   {k:"passage",l:"What is narrated",t:"text",ph:"the reading it follows"},
+   {k:"form",l:"Form",t:"sel",opts:["Oral","Written paragraph","Short essay","Artistic - draw the scene","Dramatic - act the episode","Map-based"]},
+   {k:"length",l:"Length expected",t:"text",ph:"3-5 minutes spoken, or one paragraph"},
+   {k:"shows",l:"What a good retelling shows here",t:"area",ph:"their own words in their own order; the sequence; the names used correctly"}
+  ]},
+ {id:"common",g:"read",name:"Commonplace book",video:"",
+  how:"The student keeps one book of passages worth keeping, copied out with a line on why. Over a year it becomes their own anthology, and it is where reading, copywork and memory work meet.",
+  spec:"One book, entered into regularly, looked at on a stated cadence. In ELA this is the Reading Journal.",
+  fields:[
+   {k:"enters",l:"What goes in this time",t:"text",ph:"a passage from the reading, with a line on why it was kept"},
+   {k:"cadence",l:"How often",t:"sel",opts:["Every reading","Weekly","Every other week","Once a module"]},
+   {k:"checked",l:"Whether it is collected",t:"sel",opts:["Not collected","Read but not graded","Checked every two weeks","Graded at term end"]},
+   {k:"format",l:"Format",t:"sel",opts:["Handwritten","One Word document","Either"]}
+  ]},
+ {id:"copywork",g:"lang",name:"Copywork",video:"",
+  how:"The student transcribes a passage worth copying, by hand, exactly. Choose something defensible - poetry, a founding document, a line from the literature in hand. Present it cleanly with generous spacing.",
+  spec:"Keep sessions short and frequent: 5-15 minutes.",
+  fields:[
+   {k:"passage",l:"The passage, and where it comes from",t:"area",ph:"a sentence from a textbook is not copywork"},
+   {k:"minutes",l:"Minutes",t:"num",ph:"10"},
+   {k:"hand",l:"Hand",t:"sel",opts:["Print","Cursive","Either"]}
+  ]},
+ {id:"dictation",g:"lang",name:"Dictation",video:"",
+  how:"The student writes down what is read aloud, with full accuracy. Say whether it is prepared (studied first, builds confidence) or unprepared (builds attention). Dictate in meaningful phrases, never word by word.",
+  spec:"Correct gently - self-check against the printed text, not red pen.",
+  fields:[
+   {k:"passage",l:"The passage, and where it comes from",t:"area",ph:"the same standard as copywork: worth writing down"},
+   {k:"prep",l:"Prepared or unprepared",t:"sel",opts:["Prepared - studied first","Unprepared"]},
+   {k:"phrasing",l:"The phrases you will dictate in",t:"text",ph:"mark the breaks; never word by word"},
+   {k:"correction",l:"Correction protocol",t:"sel",opts:["Self-check against the printed text","Corrected orally together","Student writes the correct version afterwards"]}
+  ]},
+ {id:"copia",g:"lang",name:"Copia",video:"",
+  how:"The student says the same thing many ways. Name the dimension to vary - vocabulary, syntax, figure, scale, or register - and give an exact count. Vary a sentence from a text worth respecting, not a synthetic one.",
+  spec:"Labelled Word Study in anything students read.",
+  fields:[
+   {k:"source",l:"The sentence, and the text it comes from",t:"area",ph:"vary the master, not a practice sentence"},
+   {k:"dimension",l:"What is varied",t:"sel",opts:["Vocabulary - register of synonyms","Syntax","Rhetorical figure","Scale - expand or compress","Register"]},
+   {k:"count",l:"How many variations",t:"num",ph:"10"},
+   {k:"label",l:"What students see it called",t:"text",ph:"Word Study"}
+  ]},
+ {id:"imitation",g:"lang",name:"Imitation",video:"",
+  how:"The student writes in the pattern of a master. Name the model and name what is being imitated - structure, voice, a figure, a genre. Diagnose which rung of the ladder this is and do not ask for a rung the course has not built.",
+  spec:"Ladder: models to memorised patterns to paraphrase to graduated exercises to original composition.",
+  fields:[
+   {k:"model",l:"The model, named",t:"area",ph:"the text being imitated"},
+   {k:"what",l:"What about it is imitated",t:"sel",opts:["Structure","Voice","One particular figure","Genre","The shape of the argument"]},
+   {k:"rung",l:"Rung of the ladder",t:"sel",opts:["1 - Models read and heard","2 - Patterns memorised","3 - Paraphrase or variation","4 - Graduated exercise","5 - Original composition"]},
+   {k:"feedback",l:"What your correction will attend to",t:"text",ph:"one or two things, named"}
+  ]},
+ {id:"progym",g:"lang",name:"Progymnasmata exercise",video:"",
+  how:"One rung of the graduated composition ladder. Students read two or three models of the exercise, then produce that exercise themselves. Pick the rung the course has actually built up to.",
+  spec:"Teacher-facing name only. Students are told what to write, never that it is a progymnasma.",
+  fields:[
+   {k:"exercise",l:"Which exercise",t:"sel",opts:["Fable","Narrative","Chreia - anecdote with commentary","Proverb","Refutation","Confirmation","Commonplace","Encomium","Comparison","Ethopoeia - speech in character","Ekphrasis - vivid description","Thesis","Proposal of a law"]},
+   {k:"models",l:"The models read first",t:"area",ph:"two or three, named"},
+   {k:"produces",l:"What the student hands in",t:"text",ph:"and how long"},
+   {k:"shape",l:"The shape they are writing to",t:"text",ph:"what the models have in common, said plainly"}
+  ]},
+ {id:"memory",g:"mem",name:"Memorisation and recitation",video:"",
+  how:"Name the specific piece, tie it to the story or context it belongs to, and give it a place in the review cycle. Include an occasion to recite aloud - recitation is part of the assignment, not an extra.",
+  spec:"Review a little at a time across the term rather than cramming.",
+  fields:[
+   {k:"piece",l:"The piece, in full",t:"area",ph:"the poem, speech, list or form - not a topic"},
+   {k:"story",l:"The story or context it belongs to",t:"text",ph:"a date without a story is a flashcard"},
+   {k:"review",l:"Where it sits in the review cycle",t:"text",ph:"introduced week 2, reviewed weekly to week 9"},
+   {k:"occasion",l:"Where they recite it, and to whom",t:"text",ph:"an occasion, not an add-on"}
+  ]},
+ {id:"review",g:"mem",name:"Review cycle",video:"",
+  how:"A short pass over old material, deliberately spaced. Distributed review across the term makes memory permanent; a block of cramming before the test does not. The cycle is planned, not improvised.",
+  spec:"A little, often. Say what is in the cycle, how often, and for how long.",
+  fields:[
+   {k:"what",l:"What is in the cycle now",t:"area",ph:"list the pieces currently under review"},
+   {k:"cadence",l:"How often",t:"sel",opts:["Every session","Weekly","Every other week","Termly consolidation"]},
+   {k:"minutes",l:"Minutes",t:"num",ph:"5"},
+   {k:"who",l:"Run by",t:"sel",opts:["Teacher-led","Student self-quizzes","In pairs"]}
+  ]},
+ {id:"disputed",g:"arg",name:"Disputed question",video:"",
+  how:"A real question with genuine sides, argued and answered - not a five-paragraph essay wearing a Latin name. State the question, the strongest case each way, and what the student must do with it.",
+  spec:"Early forms in Logic stage; full essays in Rhetoric.",
+  fields:[
+   {k:"question",l:"The question",t:"area",ph:"stated so it can be answered seriously either way"},
+   {k:"objections",l:"The strongest objections, three or more",t:"area",ph:"stated so someone holding them would recognise themselves"},
+   {k:"contra",l:"The authority, text or principle you stand on",t:"text",ph:"the sed contra"},
+   {k:"produces",l:"What the student produces",t:"sel",opts:["Two or three sentences a section","A short essay","A full disputed question","An oral defence"]}
+  ]},
+ {id:"socratic",g:"arg",name:"Socratic discussion",video:"",
+  how:"Supply the opening questions in the plan. A generic instruction to discuss the topic is not this tool.",
+  spec:"Write the first three questions and where you expect the conversation to turn.",
+  fields:[
+   {k:"text",l:"The text or problem in view",t:"text",ph:"what everyone has in front of them"},
+   {k:"questions",l:"Opening questions, concrete to abstract",t:"area",ph:"three to six: what it says, then what it means, then what it implies"},
+   {k:"turn",l:"Where you expect it to turn",t:"text",ph:"and where students usually go astray"},
+   {k:"refocus",l:"The question that returns them to the text",t:"text",ph:"ready for when it drifts into opinion"}
+  ]},
+ {id:"causes",g:"arg",name:"The four causes",video:"",
+  how:"Ask what a thing is made of, what makes it the kind of thing it is, what brought it about, and what it is for. Aristotle held the last to be the one that gives the others their point, and it is the one modern questions skip. Use it where it opens the subject up, not everywhere.",
+  spec:"Grammar stage does this without the vocabulary - What is it for? asked often. Name the causes from Logic stage on.",
+  fields:[
+   {k:"object",l:"What is being examined",t:"text",ph:"the event, organism, poem or proof"},
+   {k:"causes",l:"Causes in play",t:"mx",opts:["Material","Formal","Efficient","Final"]},
+   {k:"naming",l:"Named or not",t:"sel",opts:["Named as the four causes","Asked in plain words, unnamed"]},
+   {k:"questions",l:"The questions as you will actually ask them",t:"area",ph:"resist a single-cause framing"}
+  ]},
+ {id:"apprentice",g:"reg",name:"Apprenticeship",video:"",
+  how:"The teacher works alongside the student, showing the craft rather than describing it. Suited to studio, lab, translation, and composition.",
+  spec:"Say what the teacher demonstrates while students watch.",
+  fields:[
+   {k:"demonstrates",l:"What the teacher does in front of them",t:"area",ph:"the craft shown, not described"},
+   {k:"alongside",l:"What students do while it happens",t:"text",ph:"watching is a task"},
+   {k:"release",l:"What is handed over this time",t:"text",ph:"gradual release, said out loud"},
+   {k:"own",l:"Room left for the teacher's own practice",t:"text",ph:"the passage they love, the problem they want to work"}
+  ]},
+ {id:"worked",g:"reg",name:"Worked example, then practice",video:"",
+  how:"The teacher works one real instance all the way through in view, then students attempt one while it is still fresh, then they work alone. Apprenticeship at the scale of a single lesson, and what a rule-then-exercises page is missing.",
+  spec:"Work a real example, not a simplified stand-in. Show the technique; never name it to students.",
+  fields:[
+   {k:"example",l:"The example the teacher works, in full",t:"area",ph:"the actual problem or passage, worked start to finish"},
+   {k:"watching",l:"What students do while watching",t:"text",ph:"copy the working, predict the next step, nothing"},
+   {k:"practice",l:"The attempt that follows, with a count",t:"text",ph:"three of the same kind, then two that differ"},
+   {k:"check",l:"How you find out who has it",t:"text",ph:"before they leave the lesson"}
+  ]},
+ {id:"shared",g:"reg",name:"Shared inquiry",video:"",
+  how:"Students meet each other as fellow inquirers rather than only meeting the teacher: the same text across the cohort, formats where students answer each other, and an occasion where shared work is genuinely shared.",
+  spec:"Specify the format. Discuss in pairs is not one. The second student narrates what the first said is.",
+  fields:[
+   {k:"format",l:"Format",t:"sel",opts:["Paired narration","The second narrates the first","Older student to younger","Class recitation or performance","Published class anthology"]},
+   {k:"what",l:"What they work on together",t:"text",ph:"the shared text or task"},
+   {k:"occasion",l:"Where the shared work is shown",t:"text",ph:"and to whom"}
+  ]}
+];
+
+/* Field values, keyed moveId.fieldKey. Kept flat so a move can be unticked and
+   reticked without losing what was typed into it. */
+var MV={},AUTOFORM=true;
+
+function mv(id,k){return (MV[id+"."+k]||"").toString().trim()}
 
 /* Templates derived from the tools above. Each scaffolds a shape, not prose. */
 var TPL={
@@ -292,7 +447,31 @@ var TPL={
    steps:["What the teacher demonstrates.",
           "What students attempt while watching.",
           "A long uninterrupted stretch of work.",
-          "How work is shown and responded to."]}
+          "How work is shown and responded to."]},
+  {id:"worked",name:"Worked example, then practice",tools:["worked","review","attention"],
+   blurb:"The teacher works one real instance through, students attempt one, then they work alone. The shape most maths and skills lessons actually want.",
+   steps:["A short review pass over what this rests on.",
+          "The teacher works one example all the way through, in view.",
+          "Students attempt one while the working is still up.",
+          "Independent practice, and the check that tells you who has it."]},
+  {id:"lab",name:"Investigation or lab",tools:["attention","narration","worked"],
+   blurb:"Observe, predict, test, record, and then narrate the result rather than filling in a sheet.",
+   steps:["What they are looking at, and what they do not yet know about it.",
+          "The prediction, written down before anything is tested.",
+          "The investigation itself, uninterrupted.",
+          "Narration of what actually happened, and where it differed from the prediction."]},
+  {id:"reviewday",name:"Review and recitation",tools:["review","memory","shared"],
+   blurb:"The weekly consolidation: a pass over everything in the cycle, ending in an occasion to recite.",
+   steps:["Short review of everything currently in the cycle.",
+          "Focused work on the one piece that is not secure.",
+          "New material added to the cycle, tied to its story.",
+          "The recitation occasion."]},
+  {id:"progym",name:"Progymnasmata exercise",tools:["progym","aloud","imitation"],
+   blurb:"One rung of the composition ladder: read the models, name the shape, then write that exercise.",
+   steps:["Two or three models of the exercise, read aloud.",
+          "Name what the models have in common - the shape of the thing.",
+          "The exercise, written to that shape.",
+          "What your correction will attend to."]}
  ],
  module:[
   {id:"arc",name:"Several tools across the weeks",tools:["attention","narration","memory","imitation"],
@@ -406,29 +585,119 @@ function applyTemplate(){
   var tpl=currentTpl();
   $("tplNote").textContent=tpl.blurb;
   // tick the tools this template implies, leaving anything else already ticked
-  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox]"),function(cb){
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),function(cb){
     if(tpl.tools.indexOf(cb.dataset.t)>=0)cb.checked=true;
+  });
+  syncTicks();
+}
+
+/* ---- moves ---- */
+/* Drawn once. The fields live inside each move's own box and appear when the
+   move is ticked, so a teacher never scrolls past fields for a move they are
+   not using, and never loses what they typed by unticking one. */
+function fieldHTML(t,f){
+  var id=t.id+"."+f.k,v=MV[id]||"",ph=f.ph||"";
+  var inner;
+  if(f.t==="sel"){
+    inner='<select data-mv="'+id+'"><option value="">—</option>'+f.opts.map(function(o){
+      return '<option'+(v===o?" selected":"")+'>'+esc(o)+'</option>'}).join("")+'</select>';
+  }else if(f.t==="mx"){
+    var on=v?v.split(", "):[];
+    inner='<span class="mx">'+f.opts.map(function(o){
+      var yes=on.indexOf(o)>=0;
+      return '<label class="'+(yes?"on":"")+'"><input type="checkbox" data-mxv="'+id+'" value="'+esc(o)+'"'+
+        (yes?" checked":"")+'>'+esc(o)+'</label>'}).join("")+'</span>';
+  }else if(f.t==="area"){
+    inner='<textarea data-mv="'+id+'" rows="2" placeholder="'+esc(ph)+'">'+esc(v)+'</textarea>';
+  }else if(f.t==="num"){
+    inner='<input type="number" min="0" data-mv="'+id+'" value="'+esc(v)+'" placeholder="'+esc(ph)+'">';
+  }else{
+    inner='<input data-mv="'+id+'" value="'+esc(v)+'" placeholder="'+esc(ph)+'">';
+  }
+  return '<label class="fl"><span>'+esc(f.l)+'</span>'+inner+'</label>';
+}
+
+function drawMoves(){
+  var h="";
+  GROUPS.forEach(function(g){
+    var mine=TOOLS.filter(function(t){return t.g===g.id});
+    if(!mine.length)return;
+    h+='<div class="grp">'+esc(g.name)+'</div>';
+    mine.forEach(function(t){
+      h+='<div class="tool" data-open="false" data-tick="false" data-id="'+t.id+'"><label>'+
+        '<input type="checkbox" data-t="'+t.id+'"><span class="nm">'+esc(t.name)+'</span>'+
+        '<span class="q" data-q="'+t.id+'" title="How this works">?</span></label>'+
+        '<div class="body">'+esc(t.how)+'<br><em style="color:#8fa9bf">'+esc(t.spec)+'</em>'+
+        (t.video?'<a class="vid" href="'+esc(t.video)+'" target="_blank" rel="noopener">Watch a short explainer →</a>'
+                :'<span class="vid">Explainer video — coming later.</span>')+
+        '</div><div class="fields">'+t.fields.map(function(f){return fieldHTML(t,f)}).join("")+'</div></div>';
+    });
+  });
+  $("tools").innerHTML=h;
+
+  Array.prototype.forEach.call($("tools").querySelectorAll(".q"),function(q){
+    q.addEventListener("click",function(e){
+      e.preventDefault();e.stopPropagation();
+      var box=q.closest(".tool");box.dataset.open=box.dataset.open==="true"?"false":"true";
+    });
+  });
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),function(cb){
+    cb.addEventListener("change",function(){
+      cb.closest(".tool").dataset.tick=String(cb.checked);
+    });
+  });
+  Array.prototype.forEach.call($("tools").querySelectorAll("[data-mv]"),function(el){
+    var ev=el.tagName==="SELECT"?"change":"input";
+    el.addEventListener(ev,function(){
+      MV[el.dataset.mv]=el.value;
+      if(el.dataset.mv==="narration.form")AUTOFORM=false;
+      render();
+    });
+  });
+  Array.prototype.forEach.call($("tools").querySelectorAll("[data-mxv]"),function(el){
+    el.addEventListener("change",function(){
+      var key=el.dataset.mxv,t=TOOLS.filter(function(x){return x.id===key.split(".")[0]})[0],
+          f=t.fields.filter(function(x){return x.k===key.split(".")[1]})[0];
+      var on=[];
+      Array.prototype.forEach.call($("tools").querySelectorAll('[data-mxv="'+key+'"]'),function(c){
+        if(c.checked)on.push(c.value);
+      });
+      // keep the declared order, not the click order
+      MV[key]=f.opts.filter(function(o){return on.indexOf(o)>=0}).join(", ");
+      Array.prototype.forEach.call($("tools").querySelectorAll('[data-mxv="'+key+'"]'),function(c){
+        c.parentNode.className=c.checked?"on":"";
+      });
+      render();
+    });
   });
 }
 
-/* ---- tools ---- */
-$("tools").innerHTML=TOOLS.map(function(t){
-  return '<div class="tool" data-open="false"><label>'+
-    '<input type="checkbox" data-t="'+t.id+'"><span class="nm">'+esc(t.name)+'</span>'+
-    '<span class="q" data-q="'+t.id+'" title="How this works">?</span></label>'+
-    '<div class="body">'+esc(t.how)+'<br><em style="color:#8fa9bf">'+esc(t.spec)+'</em>'+
-    (t.video?'<a class="vid" href="'+esc(t.video)+'" target="_blank" rel="noopener">Watch a short explainer →</a>'
-            :'<span class="vid">Explainer video — coming later.</span>')+
-    '</div></div>'}).join("");
-Array.prototype.forEach.call($("tools").querySelectorAll(".q"),function(q){
-  q.addEventListener("click",function(e){
-    e.preventDefault();
-    var box=q.closest(".tool");box.dataset.open=box.dataset.open==="true"?"false":"true";
+/* The narration form follows the trivium stage until a teacher overrides it,
+   after which it stays put -- the stage is a default, not a rule. */
+function syncNarrationForm(){
+  if(!AUTOFORM)return;
+  var byStage={Grammar:"Oral",Logic:"Written paragraph",Rhetoric:"Short essay"};
+  MV["narration.form"]=byStage[$("stage").value]||"";
+  var sel=$("tools").querySelector('[data-mv="narration.form"]');
+  if(sel)sel.value=MV["narration.form"];
+}
+
+/* Ticks set by a template do not fire a change event, so reveal their fields. */
+function syncTicks(){
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),function(cb){
+    cb.closest(".tool").dataset.tick=String(cb.checked);
   });
-});
+}
 function chosenTools(){
-  return Array.prototype.filter.call($("tools").querySelectorAll("input[type=checkbox]"),function(c){return c.checked})
-    .map(function(c){return TOOLS.filter(function(t){return t.id===c.dataset.t})[0]});
+  // [data-t] is load-bearing. A move's own fields can contain checkboxes too --
+  // the four causes are four of them -- and an unqualified selector picks those
+  // up, maps them to no move at all, and throws inside render() the first time a
+  // teacher clicks one. Qualify on the tick attribute, and drop anything that
+  // still fails to resolve rather than trusting the list.
+  return Array.prototype.filter.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),
+      function(c){return c.checked})
+    .map(function(c){return TOOLS.filter(function(t){return t.id===c.dataset.t})[0]})
+    .filter(Boolean);
 }
 
 /* ---- module: tracks and the week grid ---- */
@@ -548,6 +817,31 @@ function render(){
 
 function stdRows(){return Object.keys(picked).map(function(k){return picked[k]})}
 
+/* One block per move in the document: the guidance, then what the teacher has
+   actually specified, then a named slot for whatever is still missing. The slot
+   is deliberate -- an empty field must read as an open decision, not as a thing
+   the tool quietly filled in. */
+function moveBlock(x){
+  var h="<h4>"+esc(x.name)+"</h4><p>"+esc(x.how)+
+        '<span class="how"><em>'+esc(x.spec)+"</em>"+
+        (x.video?' · <a href="'+esc(x.video)+'" target="_blank" rel="noopener">explainer</a>':"")+"</span></p>";
+  var filled=[],empty=[];
+  x.fields.forEach(function(f){
+    var v=mv(x.id,f.k);
+    if(v)filled.push([f.l,v]); else empty.push(f.l);
+  });
+  if(filled.length){
+    h+='<table class="mv">'+filled.map(function(r){
+      return "<tr><th>"+esc(r[0])+"</th><td>"+esc(r[1]).split(String.fromCharCode(10)).join("<br>")+"</td></tr>"
+    }).join("")+"</table>";
+  }
+  if(empty.length){
+    h+='<div class="slot"><strong>Still to name:</strong> '+empty.map(esc).join("; ")+".</div>";
+  }
+  return h;
+}
+
+
 function drawDoc(t){
   if($("scope").value==="module"){return drawModuleDoc(t)}
   var std=stdRows(),tools=chosenTools(),tpl=currentTpl(),stage=$("stage").value;
@@ -573,13 +867,13 @@ function drawDoc(t){
   if(tpl.tools.indexOf("narration")>=0) h+='<div class="rule">Close with '+narr+', the form this stage calls for.</div>';
 
   if(tools.length){
-    h+="<h3>Tools in use</h3>";
-    tools.forEach(function(x){
-      h+="<p><strong>"+esc(x.name)+".</strong> "+esc(x.how)+
-         '<span class="how"><em>'+esc(x.spec)+"</em>"+
-         (x.video?' · <a href="'+esc(x.video)+'" target="_blank" rel="noopener">explainer</a>':"")+"</span></p>";
-    });
-    h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method — Copia is labelled <em>Word Study</em> for students.</div>';
+    h+="<h3>Moves in use</h3>";
+    tools.forEach(function(x){h+=moveBlock(x)});
+    // The Copia clause is only worth printing when Copia is actually in use;
+    // the rule it belongs to is program-wide either way.
+    var named=tools.some(function(x){return x.id==="copia"});
+    h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method'+
+       (named?' — Copia is labelled <em>Word Study</em> for students':'')+'.</div>';
   }
 
   h+="<h3>Assessment and time</h3>";
@@ -641,10 +935,9 @@ function drawModuleDoc(t){
     :'<div class="slot">What you need to have ready before teaching this. Name real ones — this tool will not invent a text for you.</div>';
 
   if(tools.length){
-    h+="<h3>Tools across the module</h3>";
-    tools.forEach(function(x){h+="<p><strong>"+esc(x.name)+".</strong> "+esc(x.how)+
-      '<span class="how"><em>'+esc(x.spec)+"</em></span></p>"});
-    h+='<div class="rule">Use three or four tools well in one lesson. Across a whole module, most of them should turn up somewhere. These names are teacher-facing — student text never names the method.</div>';
+    h+="<h3>Moves across the module</h3>";
+    tools.forEach(function(x){h+=moveBlock(x)});
+    h+='<div class="rule">Use three or four moves well in one lesson. Across a whole module, most of them should turn up somewhere. These names are teacher-facing — student text never names the method.</div>';
   }
 
   h+="<h3>Module assessment and time</h3>";
@@ -713,9 +1006,26 @@ function drawPrompt(t){
   L.push("");
   if(assets.length){L.push("ASSETS THE TEACHER HAS:");assets.forEach(function(a){L.push("  "+a.kind+": "+(a.desc||"(unnamed)"))});L.push("")}
   if(tools.length){
-    L.push("CLASSICAL TOOLS TO USE, and how each is run:");
-    tools.forEach(function(x){L.push("  "+x.name+" — "+x.how+" "+x.spec)});
+    L.push("PEDAGOGICAL MOVES TO USE. For each one, what the teacher has already");
+    L.push("decided is given. Use it exactly; do not overwrite it.");
+    var gaps=[];
+    tools.forEach(function(x){
+      L.push("");
+      L.push("  "+x.name+" — "+x.how+" "+x.spec);
+      x.fields.forEach(function(f){
+        var v=mv(x.id,f.k);
+        if(v)L.push("      "+f.l+": "+v.split(String.fromCharCode(10)).join(" / "));
+        else gaps.push(x.name+" — "+f.l);
+      });
+    });
     L.push("");
+    if(gaps.length){
+      L.push("NOT YET SPECIFIED. Propose each of these explicitly and say it is a");
+      L.push("proposal. Where a real text is required and none is named, leave a slot");
+      L.push("saying what is needed rather than inventing one:");
+      gaps.forEach(function(g){L.push("  "+g)});
+      L.push("");
+    }
   }
   L.push("HOUSE RULES:");
   L.push("- Say teacher, never facilitator.");
@@ -744,7 +1054,7 @@ $("scope").addEventListener("change",function(){
 ["quarter","question","rhythm"].forEach(function(id){$(id).addEventListener("input",render)});
 $("template").addEventListener("change",function(){applyTemplate();render()});
 ["title","len","stage","roster"].forEach(function(id){$(id).addEventListener("input",render)});
-$("stage").addEventListener("change",render);
+$("stage").addEventListener("change",function(){syncNarrationForm();render()});
 $("tools").addEventListener("change",render);
 $("addItem").addEventListener("click",function(){addItem(1,"",undefined,20)});
 $("addAsset").addEventListener("click",function(){addAsset()});
@@ -774,7 +1084,10 @@ $("dl").addEventListener("click",function(){
   setTimeout(function(){URL.revokeObjectURL(u)},1000);
 });
 
+drawMoves();
 buildTemplateOptions();
+syncNarrationForm();
+syncTicks();
 addAsset("Text or reading","");
 addItem(4,"Reading and preparation",0,30);
 addItem(3,"Narration",5,20);
