@@ -13,7 +13,6 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
-  .proto{background:var(--gold);color:#2a1d00;padding:7px 20px;font-size:12.5px;font-weight:600}
   .wrap{display:grid;grid-template-columns:minmax(330px,430px) 1fr}
   @media(max-width:940px){.wrap{grid-template-columns:1fr}}
 
@@ -97,8 +96,6 @@
 </style>
 </head>
 <body>
-
-<div class="proto">Prototype — no API key, no server. Standards come from the corpus; the templates and guidance come from your own classical-pedagogy skill.</div>
 
 <div class="wrap">
 <aside class="panel">
@@ -385,15 +382,20 @@ function drawStds(){
 /* ---- templates ---- */
 function templates(){return TPL[$("scope").value]}
 function currentTpl(){var id=$("template").value;return templates().filter(function(t){return t.id===id})[0]||templates()[0]}
-function drawTemplates(preselect){
-  var list=templates();
-  $("template").innerHTML=list.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("");
-  if(preselect)$("template").value=preselect;
-  $("tplNote").textContent=currentTpl().blurb;
-  // tick the tools this template implies, leaving anything else the teacher chose
-  var want=currentTpl().tools;
+/* Two separate jobs, deliberately. Rebuilding the option list only makes sense
+   when the SCOPE changes; doing it inside the select's own change handler tore
+   down the option the teacher had just clicked and the menu stopped working. */
+function buildTemplateOptions(){
+  $("template").innerHTML=templates().map(function(t){
+    return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("");
+  applyTemplate();
+}
+function applyTemplate(){
+  var tpl=currentTpl();
+  $("tplNote").textContent=tpl.blurb;
+  // tick the tools this template implies, leaving anything else already ticked
   Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox]"),function(cb){
-    if(want.indexOf(cb.dataset.t)>=0)cb.checked=true;
+    if(tpl.tools.indexOf(cb.dataset.t)>=0)cb.checked=true;
   });
 }
 
@@ -734,12 +736,12 @@ $("scope").addEventListener("change",function(){
   $("modOnly").style.display=mod?"block":"none";
   $("weeksTab").style.display=mod?"":"none";
   if(!mod&&tab==="weeks"){document.querySelector('.tabs button[data-p=plan]').click()}
-  drawTemplates();if(mod){drawTracks();drawGrid()}render();
+  buildTemplateOptions();if(mod){drawTracks();drawGrid()}render();
 });
 ["weeks","sessions"].forEach(function(id){
   $(id).addEventListener("input",function(){drawGrid();render()})});
 ["quarter","question","rhythm"].forEach(function(id){$(id).addEventListener("input",render)});
-$("template").addEventListener("change",function(){drawTemplates($("template").value);render()});
+$("template").addEventListener("change",function(){applyTemplate();render()});
 ["title","len","stage","roster"].forEach(function(id){$(id).addEventListener("input",render)});
 $("stage").addEventListener("change",render);
 $("tools").addEventListener("change",render);
@@ -771,7 +773,7 @@ $("dl").addEventListener("click",function(){
   setTimeout(function(){URL.revokeObjectURL(u)},1000);
 });
 
-drawTemplates();
+buildTemplateOptions();
 addAsset("Text or reading","");
 addItem(4,"Reading and preparation",0,30);
 addItem(3,"Narration",5,20);
