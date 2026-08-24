@@ -29,6 +29,10 @@
   .checks label{display:flex;gap:7px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
   .checks input{width:auto;margin-top:3px;flex:none}
   .checks .c{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+  .jbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
+  .jbar button{font:inherit;font-size:12.5px;padding:5px 11px;border-radius:999px;cursor:pointer;
+    border:1px solid #2c4d6e;background:transparent;color:#c8d8e6;transition:.15s}
+  .jbar button[aria-pressed=true]{background:var(--cyan);border-color:var(--cyan);color:#04212b;font-weight:600}
   .jhead{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--cyan);margin:8px 0 3px;font-weight:700}
 
   .tool{border:1px solid #2c4d6e;border-radius:6px;margin-bottom:6px;background:#0b2b45;overflow:hidden}
@@ -105,10 +109,11 @@
     <label class="f"><span>Subject</span><select id="subject"></select></label>
     <label class="f"><span>Grade</span><select id="grade"></select></label>
   </div>
+  <div class="jbar" id="jbar"></div>
   <div class="checks" id="stdList"><div style="color:#8fa9bf;font-size:13px">Loading…</div></div>
 
   <h2>Template</h2>
-  <p class="note" id="tplNote">Choose the shape of the thing you are making. Each template scaffolds a different classical tool.</p>
+  <p class="note" id="tplNote">Pick what you are making. Each one sets up a different classical tool.</p>
   <label class="f"><span>Scope</span>
     <select id="scope"><option value="lesson">Single lesson</option><option value="module">Whole module</option></select></label>
   <label class="f"><span>Template</span><select id="template"></select></label>
@@ -119,8 +124,8 @@
       <label class="f"><span>Sessions / week</span><input id="sessions" type="number" min="1" max="7" value="5"></label>
     </div>
     <label class="f"><span>Quarter or term</span><input id="quarter" placeholder="e.g. Q1"></label>
-    <label class="f"><span>The question we live with</span>
-      <textarea id="question" rows="2" placeholder="The one question the whole module keeps returning to."></textarea></label>
+    <label class="f"><span>Central question</span>
+      <textarea id="question" rows="2" placeholder="The one question this module keeps coming back to."></textarea></label>
     <label class="f"><span>Weekly rhythm</span>
       <textarea id="rhythm" rows="2" placeholder="What every week looks like, stated once."></textarea></label>
   </div>
@@ -138,12 +143,12 @@
   <div id="tools"></div>
 
   <h2>Assets needed</h2>
-  <p class="note">What the teacher has to have in hand before teaching this.</p>
+  <p class="note">What you need ready before you teach this.</p>
   <div id="assets"></div>
   <button class="add" id="addAsset" type="button">+ Add an asset</button>
 
   <h2>Time calculator</h2>
-  <p class="note">An estimate, not a rule. Change any number — the tier only sets a starting point.</p>
+  <p class="note">An estimate, not a rule. Change any number. The tier just fills in a starting figure.</p>
   <label class="f"><span>Students the teacher serves</span><input id="roster" type="number" value="30" min="1"></label>
   <div class="colhead"><span class="lbl">Assessed item</span><span class="tier">Tier</span><span class="num">Grade</span><span class="num">Do</span><span class="sp"></span></div>
   <div id="items"></div>
@@ -164,7 +169,7 @@
   </div>
   <div class="pane" data-p="plan" data-on="true"><div class="doc" id="doc"></div></div>
   <div class="pane" data-p="weeks">
-    <p class="hint">Tracks run down the weeks the way your module maps do — reading, craft, grammar, memory, VR. Rename one, add one, or drop one. Type straight into the grid.</p>
+    <p class="hint">One row per week. Each column is something you are tracking week to week — the reading, writing, grammar, memory work, VR. Rename a column, add one, or delete one. Type straight into the grid.</p>
     <div id="trackBar" style="margin-bottom:12px"></div>
     <div style="overflow-x:auto"><table class="grid" id="weekGrid"></table></div>
   </div>
@@ -219,13 +224,13 @@ var TOOLS=[
   spec:"Form by stage: oral (Grammar), a written paragraph (Logic), a short essay (Rhetoric)."},
  {id:"copywork",name:"Copywork",video:"",
   how:"The student transcribes a passage worth copying, by hand, exactly. Choose something defensible — poetry, a founding document, a line from the literature in hand. Present it cleanly with generous spacing.",
-  spec:"Short and frequent beats long: 5–15 minutes."},
+  spec:"Keep sessions short and frequent: 5–15 minutes."},
  {id:"dictation",name:"Dictation",video:"",
   how:"The student writes down what is read aloud, with full accuracy. Say whether it is prepared (studied first, builds confidence) or unprepared (builds attention). Dictate in meaningful phrases, never word by word.",
   spec:"Correct gently — self-check against the printed text, not red pen."},
  {id:"memory",name:"Memorisation and recitation",video:"",
   how:"Name the specific piece, tie it to the story or context it belongs to, and give it a place in the review cycle. Include an occasion to recite aloud — recitation is part of the assignment, not an extra.",
-  spec:"Distributed review across the term, not cramming."},
+  spec:"Review a little at a time across the term rather than cramming."},
  {id:"imitation",name:"Imitation",video:"",
   how:"The student writes in the pattern of a master. Name the model and name what is being imitated — structure, voice, a figure, a genre. Diagnose which rung of the ladder this is and do not ask for a rung the course has not built.",
   spec:"Ladder: models → memorised patterns → paraphrase → graduated exercises → original composition."},
@@ -240,7 +245,7 @@ var TOOLS=[
   spec:"Write the first three questions and where you expect the conversation to turn."},
  {id:"apprentice",name:"Apprenticeship",video:"",
   how:"The teacher works alongside the student, showing the craft rather than describing it. Suited to studio, lab, translation, and composition.",
-  spec:"Say what the teacher does in view of the student."}
+  spec:"Say what the teacher demonstrates while students watch."}
 ];
 
 /* Templates derived from the tools above. Each scaffolds a shape, not prose. */
@@ -248,16 +253,16 @@ var TPL={
  lesson:[
   {id:"reading",name:"Reading lesson, closing with narration",tools:["attention","narration"],
    blurb:"One substantial reading, then the student retells it. The default shape for literature, history and science reading.",
-   steps:["Set attention — one reading, stated length, no interruptions.",
+   steps:["Set up the reading: one pass, say how long, no interruptions.",
           "Encounter the text.",
           "Narration, in the form set by the stage.",
-          "Teacher note: what good narration shows here."]},
+          "Note for yourself: what a good retelling looks like here."]},
   {id:"composition",name:"Composition by imitation",tools:["imitation","copia"],
    blurb:"Walks the student up the imitation ladder rather than asking for original work too early.",
-   steps:["Name the model and what is being imitated.",
-          "Name the rung of the ladder this assignment sits on.",
+   steps:["Name the model, and what about it students are imitating.",
+          "Say which step of the imitation sequence this is.",
           "The exercise itself.",
-          "Feedback focus — specific and gentle, against the tradition's standards."]},
+          "What to focus on in feedback."]},
   {id:"skills",name:"Copywork and dictation skills lesson",tools:["copywork","dictation","attention"],
    blurb:"Short, frequent handwriting and accuracy work on passages worth the effort.",
    steps:["The passage, presented cleanly.",
@@ -266,7 +271,7 @@ var TPL={
           "Correction protocol."]},
   {id:"memory",name:"Memory and recitation cycle",tools:["memory","attention"],
    blurb:"Names the piece, ties it to its story, and schedules the review and the recitation.",
-   steps:["The piece, and the story or context it belongs to.",
+   steps:["The passage, and the story or context it comes from.",
           "Introduction and first rehearsal.",
           "Review schedule across the term.",
           "The recitation occasion."]},
@@ -280,13 +285,13 @@ var TPL={
    blurb:"A prepared conversation with written opening questions.",
    steps:["The text or problem in view.",
           "Opening questions, written out.",
-          "Where the conversation is expected to turn.",
-          "What students bring, and what they leave with."]},
+          "Where you expect the conversation to turn.",
+          "What students prepare beforehand, and what they take away."]},
   {id:"studio",name:"Studio or apprenticeship session",tools:["apprentice","attention"],
    blurb:"The teacher works in view of the students and they work alongside.",
    steps:["What the teacher demonstrates.",
           "What students attempt while watching.",
-          "The sustained working stretch.",
+          "A long uninterrupted stretch of work.",
           "How work is shown and responded to."]}
  ],
  module:[
@@ -297,8 +302,8 @@ var TPL={
           "Week 3 — imitation or disputed question.",
           "Week 4 — composition, recitation, and the assessed piece."]},
   {id:"unit",name:"Text-centred unit",tools:["attention","narration","copywork","imitation"],
-   blurb:"Built around one substantial text the students stay with.",
-   steps:["The text, and why it is worth the weeks.",
+   blurb:"Built around one main text that students read across the whole module.",
+   steps:["The main text, and why you chose it.",
           "Reading schedule and narration points.",
           "Copywork and memory drawn from the text itself.",
           "The culminating composition, imitating something in it."]}
@@ -323,7 +328,7 @@ var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 var fmt=function(m){return m<60?Math.round(m)+" min":(m/60).toFixed(1)+" hr"};
 
-var MAN=null,BUNDLE=null,picked={},items=[],assets=[],tab="plan";
+var MAN=null,BUNDLE=null,picked={},items=[],assets=[],tab="plan",jOff={};
 
 /* ---- data ---- */
 fetch(BASE+"bundles-manifest.json").then(function(r){return r.json()}).then(function(m){
@@ -350,8 +355,23 @@ function drawStds(){
   var byJ={},ci={};
   BUNDLE.courses.forEach(function(c){ci[c.i]=c});
   BUNDLE.standards.forEach(function(s){(byJ[ci[s[0]].j]=byJ[ci[s[0]].j]||[]).push(s)});
+
+  // One button per state that actually has standards for this subject and
+  // grade. Switching a state off only hides it; anything already ticked stays
+  // in the plan, so a teacher cannot lose work by tidying the list.
+  var present=Object.keys(byJ).sort();
+  $("jbar").innerHTML=present.map(function(j){
+    return '<button type="button" data-j="'+esc(j)+'" aria-pressed="'+(jOff[j]?"false":"true")+'">'+
+      esc(MAN.jurisdictions[j]||j)+" · "+byJ[j].length+"</button>"}).join("");
+  Array.prototype.forEach.call($("jbar").querySelectorAll("button"),function(b){
+    b.addEventListener("click",function(){
+      jOff[b.dataset.j]=!jOff[b.dataset.j];
+      drawStds();render();
+    });
+  });
+
   var h="";
-  Object.keys(byJ).sort().forEach(function(j){
+  present.filter(function(j){return !jOff[j]}).forEach(function(j){
     h+='<div class="jhead">'+esc(MAN.jurisdictions[j]||j)+" · "+byJ[j].length+"</div>";
     byJ[j].forEach(function(s){
       var w=s[5]&&s[5].withheld;
@@ -547,9 +567,9 @@ function drawDoc(t){
   h+="<h3>Assets needed</h3>";
   h+=assets.length?("<ul>"+assets.map(function(a){
       return "<li><strong>"+esc(a.kind)+".</strong> "+(a.desc?esc(a.desc):'<span style="color:#5d6b7a">— name it</span>')+"</li>"}).join("")+"</ul>")
-    :'<div class="slot">List what the teacher must have in hand: the text, handouts, the VR space, materials. Name real ones — this tool will not invent a reading for you.</div>';
+    :'<div class="slot">What you need ready before teaching: the text, handouts, the VR space, materials. Name real ones — this tool will not invent a reading for you.</div>';
 
-  h+="<h3>Shape</h3><ol>"+tpl.steps.map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+"</ol>";
+  h+="<h3>Sequence</h3><ol>"+tpl.steps.map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+"</ol>";
   if(tpl.tools.indexOf("narration")>=0) h+='<div class="rule">Close with '+narr+', the form this stage calls for.</div>';
 
   if(tools.length){
@@ -572,7 +592,7 @@ function drawDoc(t){
       '<div class="rule">Graded items are Canvas-native: quizzes, discussions, and assignments with a rubric of at most four criteria.</div>';
   } else h+='<p style="color:#5d6b7a">Add assessed items on the left to estimate teacher and student time.</p>';
 
-  h+="<h3>Teacher notes</h3><div class=\"slot\">Anything the plan assumes: what good work looks like here, where students usually stumble, what to say and what to leave alone.</div>";
+  h+="<h3>Teacher notes</h3><div class=\"slot\">What good work looks like here, and where students usually get stuck.</div>";
   $("doc").innerHTML=h;
 }
 
@@ -585,11 +605,11 @@ function drawModuleDoc(t){
     $("sessions").value+" sessions a week</div>";
 
   if($("question").value)
-    h+="<h3>The question we live with</h3><p>"+esc($("question").value)+"</p>";
+    h+="<h3>Central question</h3><p>"+esc($("question").value)+"</p>";
   if($("rhythm").value)
     h+="<h3>Weekly rhythm</h3><p>"+esc($("rhythm").value)+"</p>";
 
-  h+="<h3>Shape</h3><ol>"+tpl.steps.map(function(x){return "<li>"+esc(x)+"</li>"}).join("")+"</ol>";
+  h+="<h3>Sequence</h3><ol>"+tpl.steps.map(function(x){return "<li>"+esc(x)+"</li>"}).join("")+"</ol>";
 
   h+="<h3>Week by week</h3><table><tr><th>Wk</th>"+
      MOD.tracks.map(function(x){return "<th>"+esc(x.name)+"</th>"}).join("")+"</tr>";
@@ -600,31 +620,31 @@ function drawModuleDoc(t){
       return "<td>"+(v?esc(v).split(String.fromCharCode(10)).join("<br>"):'<span style="color:#b6c3ce">—</span>')+"</td>"}).join("")+"</tr>";
   }
   h+="</table>";
-  if(!anyCell) h+='<div class="slot">Fill the grid on the <strong>Week by week</strong> tab. Write a standard code into a cell and it will show as covered below.</div>';
+  if(!anyCell) h+='<div class="slot">Fill the grid on the <strong>Week by week</strong> tab. Type a standard code into a week and it will show as covered below.</div>';
 
-  h+="<h3>Standards and where they close</h3>";
+  h+="<h3>Standards, and where each one is covered</h3>";
   if(!cov.length) h+='<p style="color:#5d6b7a">Tick standards on the left.</p>';
   else{
-    h+="<table><tr><th>Code</th><th>Standard</th><th>Closes in</th></tr>"+cov.map(function(c){
+    h+="<table><tr><th>Code</th><th>Standard</th><th>Covered in</th></tr>"+cov.map(function(c){
       return "<tr><td><code>"+esc(c.code)+"</code></td><td>"+
         (c.withheld?'<em style="color:#5d6b7a">PRDE reserves this wording — read it at source.</em>':esc(c.text))+
         "</td><td>"+(c.weeks.length?("Week "+c.weeks.join(", ")):'<span style="color:#8a5a00">not placed yet</span>')+
         "</td></tr>"}).join("")+"</table>";
     var un=cov.filter(function(c){return !c.weeks.length}).length;
     if(un) h+='<div class="rule">'+un+' standard'+(un===1?" has":"s have")+
-      " no week yet. Put the code in a grid cell where it is genuinely taught — this table reports what you wrote, it does not guess.</div>";
+      " no week yet. Type the code into the week where you actually teach it. This table shows what you typed; it does not guess.</div>";
   }
 
   h+="<h3>Assets needed</h3>";
   h+=assets.length?("<ul>"+assets.map(function(a){
       return "<li><strong>"+esc(a.kind)+".</strong> "+(a.desc?esc(a.desc):'<span style="color:#5d6b7a">— name it</span>')+"</li>"}).join("")+"</ul>")
-    :'<div class="slot">List what the teacher must have in hand across the module. Name real ones — this tool will not invent a text.</div>';
+    :'<div class="slot">What you need to have ready before teaching this. Name real ones — this tool will not invent a text for you.</div>';
 
   if(tools.length){
     h+="<h3>Tools across the module</h3>";
     tools.forEach(function(x){h+="<p><strong>"+esc(x.name)+".</strong> "+esc(x.how)+
       '<span class="how"><em>'+esc(x.spec)+"</em></span></p>"});
-    h+='<div class="rule">Over a module all the major tools should appear; in any one lesson three or four well used beat all of them sketched. These names are teacher-facing — student text never names the method.</div>';
+    h+='<div class="rule">Use three or four tools well in one lesson. Across a whole module, most of them should turn up somewhere. These names are teacher-facing — student text never names the method.</div>';
   }
 
   h+="<h3>Module assessment and time</h3>";
@@ -637,12 +657,12 @@ function drawModuleDoc(t){
   } else h+='<p style="color:#5d6b7a">Add assessed items on the left.</p>';
   h+='<div class="rule">Modules open and close with a Canvas-native wrapper — an intro quiz and an outro quiz — with graded work as quizzes, discussions, or assignments carrying a rubric of at most four criteria.</div>';
 
-  h+="<h3>Teacher notes</h3><div class=\"slot\">What the module assumes, where students usually stumble, and what to leave alone.</div>";
+  h+="<h3>Teacher notes</h3><div class=\"slot\">Anything a teacher picking this up would need to know: where students usually get stuck, and what to expect.</div>";
   $("doc").innerHTML=h;
 }
 
 function drawTiers(){
-  var h='<h1>What the tiers mean</h1><div class="sub">From Optima\'s Canvas assignment architecture. The tier tells you who is doing the responding, which is what drives the cost.</div>';
+  var h='<h1>What the tiers mean</h1><div class="sub">From Optima\'s Canvas assignment architecture. The tier says who responds to the work. That is what drives how long it takes you.</div>';
   [1,2,3,4].forEach(function(n){
     var t=TIER[n];
     h+="<h3>"+esc(t.name)+"</h3><p>"+esc(t.what)+"</p><p><strong>When to use it.</strong> "+esc(t.when)+
@@ -667,7 +687,7 @@ function drawPrompt(t){
     var n=weeks();
     L.push("MODULE SHAPE: "+n+" weeks, "+$("sessions").value+" sessions a week"+
            ($("quarter").value?", "+$("quarter").value:"")+".");
-    if($("question").value)L.push("THE QUESTION THE MODULE LIVES WITH: "+$("question").value);
+    if($("question").value)L.push("CENTRAL QUESTION: "+$("question").value);
     if($("rhythm").value)L.push("WEEKLY RHYTHM: "+$("rhythm").value);
     L.push("");
     L.push("WEEK BY WEEK AS PLANNED (fill gaps, do not overwrite what is here):");
@@ -684,7 +704,7 @@ function drawPrompt(t){
       L.push("");
     }
   }
-  L.push("SHAPE TO FOLLOW:");
+  L.push("SEQUENCE TO FOLLOW:");
   tpl.steps.forEach(function(s,i){L.push("  "+(i+1)+". "+s)});
   L.push("");
   L.push("STANDARDS — use these codes exactly; do not invent or alter a code:");
