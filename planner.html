@@ -9,75 +9,96 @@
     --navy:#0d2b45; --navy-deep:#081c2e; --navy-soft:#1b3f60;
     --cyan:#2ec4d6; --gold:#f2b544;
     --ink:#16202b; --muted:#5d6b7a; --line:#dde4ea; --bg:#f4f7f9; --card:#fff;
-    --ok:#1c7a4a; --warn:#8a5a00; --bad:#a12b2b;
     --mono:"Cascadia Mono",Consolas,monospace;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
   .proto{background:var(--gold);color:#2a1d00;padding:7px 20px;font-size:12.5px;font-weight:600}
-  .wrap{display:grid;grid-template-columns:minmax(320px,420px) 1fr;gap:0;align-items:start}
-  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+  .wrap{display:grid;grid-template-columns:minmax(330px,430px) 1fr}
+  @media(max-width:940px){.wrap{grid-template-columns:1fr}}
 
-  .panel{background:var(--navy-deep);color:#dbe6ef;padding:16px 18px 26px;min-height:100vh}
-  .panel h2{margin:20px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--cyan)}
+  .panel{background:var(--navy-deep);color:#dbe6ef;padding:16px 18px 30px}
+  .panel h2{margin:22px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--cyan)}
   .panel h2:first-child{margin-top:0}
+  .panel .note{font-size:12px;color:#8fa9bf;margin:-4px 0 9px;line-height:1.45}
   label.f{display:block;margin-bottom:9px;font-size:13px}
   label.f > span{display:block;margin-bottom:4px;color:#9fb6c9;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}
   select,input,textarea{font:inherit;font-size:14px;width:100%;padding:7px 9px;border-radius:5px;border:1px solid #2c4d6e;background:#0f3352;color:#fff}
   select:focus,input:focus,textarea:focus{outline:2px solid var(--cyan);outline-offset:1px}
   .two{display:flex;gap:9px}.two>*{flex:1}
-  .seg{display:flex;gap:0;border:1px solid #2c4d6e;border-radius:6px;overflow:hidden}
-  .seg button{flex:1;font:inherit;font-size:13px;padding:8px 4px;border:none;background:transparent;color:#c8d8e6;cursor:pointer}
-  .seg button[aria-pressed=true]{background:var(--cyan);color:#04212b;font-weight:600}
-  .checks{max-height:230px;overflow:auto;border:1px solid #2c4d6e;border-radius:6px;padding:7px 9px;background:#0b2b45}
+  .checks{max-height:210px;overflow:auto;border:1px solid #2c4d6e;border-radius:6px;padding:7px 9px;background:#0b2b45}
   .checks label{display:flex;gap:7px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
   .checks input{width:auto;margin-top:3px;flex:none}
   .checks .c{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
   .jhead{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--cyan);margin:8px 0 3px;font-weight:700}
-  .tools label{display:flex;gap:7px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
-  .tools input{width:auto;flex:none;margin-top:3px}
-  .tools small{display:block;color:#8fa9bf;font-size:11.5px}
-  .row{display:flex;gap:7px;margin-bottom:6px;align-items:center}
-  .row select{flex:0 0 128px}.row input.lbl{flex:1}.row input.num{flex:0 0 62px;text-align:center}
-  .row button{flex:none;background:transparent;border:1px solid #2c4d6e;color:#9fb6c9;border-radius:5px;cursor:pointer;padding:6px 9px;font:inherit}
-  .add{width:100%;margin-top:2px;background:transparent;border:1px dashed #2c4d6e;color:#9fb6c9;padding:7px;border-radius:6px;cursor:pointer;font:inherit;font-size:13px}
-  .budget{margin-top:10px;background:#0b2b45;border:1px solid #2c4d6e;border-radius:6px;padding:10px 11px;font-size:13px}
-  .budget .big{font-size:20px;font-weight:600;color:#fff}
-  .budget .flag{margin-top:7px;padding:7px 9px;border-radius:5px;font-size:12.5px;line-height:1.45}
-  .flag.ok{background:#0d3b28;color:#8ee0b4}
-  .flag.warn{background:#3d3208;color:#f0cd7a}
-  .flag.bad{background:#3d1616;color:#f0a0a0}
 
-  main{padding:0 0 40px}
-  .tabs{display:flex;gap:0;background:var(--navy);padding:0 18px}
+  .tool{border:1px solid #2c4d6e;border-radius:6px;margin-bottom:6px;background:#0b2b45;overflow:hidden}
+  .tool > label{display:flex;gap:8px;align-items:center;padding:8px 10px;cursor:pointer;font-size:13.5px}
+  .tool input[type=checkbox]{width:auto;flex:none}
+  .tool .nm{flex:1;font-weight:600}
+  .tool .q{flex:none;border:1px solid #2c4d6e;border-radius:50%;width:19px;height:19px;line-height:17px;text-align:center;font-size:11.5px;color:#9fb6c9;cursor:pointer;background:transparent}
+  .tool .body{display:none;padding:0 10px 10px;font-size:12.5px;color:#b6c9d9;line-height:1.5}
+  .tool[data-open=true] .body{display:block}
+  .tool .body .vid{display:inline-block;margin-top:6px;font-size:12px;color:#8fa9bf}
+
+  .row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+  .row input.lbl{flex:1;min-width:0}
+  .row select{flex:0 0 118px}
+  .row input.num{flex:0 0 58px;text-align:center}
+  .row button{flex:none;background:transparent;border:1px solid #2c4d6e;color:#9fb6c9;border-radius:5px;cursor:pointer;padding:6px 9px;font:inherit}
+  .colhead{display:flex;gap:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#8fa9bf;margin-bottom:4px}
+  .colhead .lbl{flex:1}.colhead .tier{flex:0 0 118px}.colhead .num{flex:0 0 58px;text-align:center}.colhead .sp{flex:0 0 33px}
+  .add{width:100%;margin-top:2px;background:transparent;border:1px dashed #2c4d6e;color:#9fb6c9;padding:7px;border-radius:6px;cursor:pointer;font:inherit;font-size:13px}
+  .totals{margin-top:10px;background:#0b2b45;border:1px solid #2c4d6e;border-radius:6px;padding:11px 12px}
+  .totals .t{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:13px}
+  .totals .t b{font-size:19px;color:#fff;font-weight:600}
+  .totals .t span{color:#9fb6c9}
+  .totals hr{border:none;border-top:1px solid #2c4d6e;margin:7px 0}
+  .ref{font-size:11.5px;color:#8fa9bf;margin-top:8px;line-height:1.5}
+
+  main{padding:0 0 40px;min-width:0}
+  .tabbar{display:flex;justify-content:space-between;align-items:center;background:var(--navy);flex-wrap:wrap}
+  .tabs{display:flex;padding:0 18px}
   .tabs button{font:inherit;font-size:13.5px;font-weight:600;padding:12px 15px;border:none;background:transparent;color:#9fb6c9;cursor:pointer;border-bottom:3px solid transparent}
   .tabs button[aria-selected=true]{color:#fff;border-bottom-color:var(--cyan)}
-  .tabbar{display:flex;justify-content:space-between;align-items:center;background:var(--navy)}
-  .acts{padding-right:16px;display:flex;gap:7px}
+  .acts{padding:0 16px 0 0;display:flex;gap:7px}
   .acts button{font:inherit;font-size:12.5px;padding:6px 11px;border-radius:5px;border:1px solid #2c4d6e;background:transparent;color:#cfe0ec;cursor:pointer;font-weight:600}
   .acts button:hover{border-color:var(--cyan);color:#fff}
   .pane{display:none;padding:18px}
   .pane[data-on=true]{display:block}
-  .doc{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:26px 30px;max-width:900px}
+  .doc{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:26px 30px;max-width:920px}
   .doc h1{font-size:21px;margin:0 0 3px;color:var(--navy)}
   .doc .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
   .doc h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--navy-soft);margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--cyan)}
   .doc p{margin:0 0 9px}
-  .doc ul,.doc ol{margin:0 0 9px;padding-left:20px}.doc li{margin-bottom:5px}
+  .doc ul,.doc ol{margin:0 0 9px;padding-left:20px}.doc li{margin-bottom:6px}
   .doc table{border-collapse:collapse;width:100%;font-size:13.5px;margin-bottom:10px}
   .doc th,.doc td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
   .doc th{background:#f2f6f9;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy-soft)}
   .doc code{font-family:var(--mono);font-size:12px;background:#eaf1f6;padding:1px 5px;border-radius:3px;color:var(--navy)}
   .doc .slot{background:#fff8e8;border-left:3px solid var(--gold);padding:7px 11px;margin:0 0 9px;font-size:13.5px}
   .doc .rule{background:#f2f6f9;border-left:3px solid var(--navy-soft);padding:7px 11px;margin:0 0 9px;font-size:13px;color:#33414f}
-  pre.prompt{background:#0b2b45;color:#dbe6ef;padding:18px 20px;border-radius:9px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:900px;margin:0}
-  .hint{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:70ch}
-  .empty{padding:40px 18px;color:var(--muted)}
+  .doc .how{color:var(--muted);font-size:13px;margin:2px 0 0}
+  pre.prompt{background:#0b2b45;color:#dbe6ef;padding:18px 20px;border-radius:9px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:920px;margin:0}
+  .hint{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:72ch}
+  table.grid{border-collapse:collapse;background:#fff;font-size:13px;min-width:100%}
+  table.grid th,table.grid td{border:1px solid var(--line);padding:0;vertical-align:top}
+  table.grid th{background:#f2f6f9;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy-soft);padding:7px 9px;text-align:left;white-space:nowrap}
+  table.grid th.wk{width:52px}
+  table.grid td.wk{text-align:center;font-weight:600;color:var(--navy);background:#f7fafc;padding:7px 4px;width:52px}
+  table.grid td.ph{background:#f7fafc;font-size:11.5px;color:var(--muted);padding:7px 9px;white-space:nowrap}
+  table.grid textarea{width:100%;min-height:52px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:7px 9px;resize:vertical}
+  table.grid textarea:focus{outline:2px solid var(--cyan);outline-offset:-2px;background:#f0fbfd}
+  .trk{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 11px;margin:0 6px 6px 0;font-size:13px}
+  .trk input{border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;width:118px;padding:0}
+  .trk button{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:0 3px}
+  .trk button:hover{color:#a12b2b}
+  .addtrk{border:1px dashed var(--line);background:#fff;color:var(--navy-soft);border-radius:999px;padding:5px 13px;font:inherit;font-size:13px;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div class="proto">Prototype — shows what a standalone planner can do with no API key. Everything below is generated from your own skills and the standards corpus.</div>
+<div class="proto">Prototype — no API key, no server. Standards come from the corpus; the templates and guidance come from your own classical-pedagogy skill.</div>
 
 <div class="wrap">
 <aside class="panel">
@@ -89,52 +110,72 @@
   </div>
   <div class="checks" id="stdList"><div style="color:#8fa9bf;font-size:13px">Loading…</div></div>
 
-  <h2>Artifact</h2>
-  <label class="f"><span>What are you making</span>
-    <select id="artifact">
-      <option value="module">Module plan (teacher-facing)</option>
-      <option value="lesson" selected>Lesson plan (teacher-facing)</option>
-      <option value="activity">Activity plan (teacher-facing)</option>
-      <option value="vr">VR space handout (student-facing)</option>
-    </select></label>
+  <h2>Template</h2>
+  <p class="note" id="tplNote">Choose the shape of the thing you are making. Each template scaffolds a different classical tool.</p>
+  <label class="f"><span>Scope</span>
+    <select id="scope"><option value="lesson">Single lesson</option><option value="module">Whole module</option></select></label>
+  <label class="f"><span>Template</span><select id="template"></select></label>
   <label class="f"><span>Working title</span><input id="title" placeholder="e.g. Fractions as division"></label>
+  <div id="modOnly" style="display:none">
+    <div class="two">
+      <label class="f"><span>Weeks</span><input id="weeks" type="number" min="1" max="20" value="9"></label>
+      <label class="f"><span>Sessions / week</span><input id="sessions" type="number" min="1" max="7" value="5"></label>
+    </div>
+    <label class="f"><span>Quarter or term</span><input id="quarter" placeholder="e.g. Q1"></label>
+    <label class="f"><span>The question we live with</span>
+      <textarea id="question" rows="2" placeholder="The one question the whole module keeps returning to."></textarea></label>
+    <label class="f"><span>Weekly rhythm</span>
+      <textarea id="rhythm" rows="2" placeholder="What every week looks like, stated once."></textarea></label>
+  </div>
   <div class="two">
     <label class="f"><span>Trivium stage</span><select id="stage">
-      <option value="Grammar">Grammar</option><option value="Logic">Logic</option><option value="Rhetoric">Rhetoric</option>
+      <option value="Grammar">Grammar (about K–4)</option>
+      <option value="Logic">Logic (about 5–8)</option>
+      <option value="Rhetoric">Rhetoric (about 9–12)</option>
     </select></label>
     <label class="f"><span>Length</span><input id="len" value="1 week"></label>
   </div>
 
-  <h2>Delivery</h2>
-  <div class="seg" id="mode">
-    <button type="button" data-m="ondemand" aria-pressed="true">On-Demand</button>
-    <button type="button" data-m="live" aria-pressed="false">Live</button>
-  </div>
-  <label class="f" style="margin-top:9px"><span>Students the teacher serves</span><input id="roster" type="number" value="500" min="1"></label>
-
   <h2>Classical tools</h2>
-  <div class="tools" id="tools"></div>
+  <p class="note">Ticked tools appear in the plan with guidance on how to run them. Press <strong>?</strong> for a short explanation.</p>
+  <div id="tools"></div>
 
-  <h2>Assessment</h2>
+  <h2>Assets needed</h2>
+  <p class="note">What the teacher has to have in hand before teaching this.</p>
+  <div id="assets"></div>
+  <button class="add" id="addAsset" type="button">+ Add an asset</button>
+
+  <h2>Time calculator</h2>
+  <p class="note">An estimate, not a rule. Change any number — the tier only sets a starting point.</p>
+  <label class="f"><span>Students the teacher serves</span><input id="roster" type="number" value="30" min="1"></label>
+  <div class="colhead"><span class="lbl">Assessed item</span><span class="tier">Tier</span><span class="num">Grade</span><span class="num">Do</span><span class="sp"></span></div>
   <div id="items"></div>
-  <button class="add" id="addItem" type="button">+ Add an assessed item</button>
-  <div class="budget" id="budget"></div>
+  <button class="add" id="addItem" type="button">+ Add an item</button>
+  <div class="totals" id="totals"></div>
 
 </aside>
 
 <main>
   <div class="tabbar">
     <div class="tabs" role="tablist">
-      <button data-p="plan" aria-selected="true">Teacher plan</button>
+      <button data-p="plan" aria-selected="true">Plan</button>
+      <button data-p="weeks" aria-selected="false" id="weeksTab" style="display:none">Week by week</button>
+      <button data-p="tiers" aria-selected="false">What the tiers mean</button>
       <button data-p="prompt" aria-selected="false">Prompt for Copilot</button>
     </div>
-    <div class="acts">
-      <button id="copy">Copy</button>
-      <button id="dl">Download</button>
-    </div>
+    <div class="acts"><button id="copy">Copy</button><button id="dl">Download</button></div>
   </div>
   <div class="pane" data-p="plan" data-on="true"><div class="doc" id="doc"></div></div>
-  <div class="pane" data-p="prompt"><p class="hint">Paste this into Copilot or Claude. It carries the standards verbatim, your constraints, the teacher-time budget, and the house rules — so the prose comes back Optima-shaped. No API key involved.</p><pre class="prompt" id="prompt"></pre></div>
+  <div class="pane" data-p="weeks">
+    <p class="hint">Arcs run down the weeks the way your module maps do — reading, craft, grammar, memory, VR. Rename a track, add one, or drop one. Type straight into the grid.</p>
+    <div id="trackBar" style="margin-bottom:12px"></div>
+    <div style="overflow-x:auto"><table class="grid" id="weekGrid"></table></div>
+  </div>
+  <div class="pane" data-p="tiers"><div class="doc" id="tierDoc"></div></div>
+  <div class="pane" data-p="prompt">
+    <p class="hint">Paste this into Copilot or Claude. It carries the standards verbatim, the template, the tools, your time estimates and the house rules, so the prose comes back Optima-shaped. No API key involved.</p>
+    <pre class="prompt" id="prompt"></pre>
+  </div>
 </main>
 </div>
 
@@ -143,38 +184,159 @@
 "use strict";
 var BASE="https://optimaondemand.github.io/optima-standards-browser/";
 
-// Rates come from optima-canvas-assignments. Tier 2 is ~30 s per post
-// (500 students x 30 s = ~4 h per discussion cycle); Tier 3 is ~5 min per
-// submission (500 x 5 min = ~41 h). Tier 1 and 4 cost the teacher nothing.
+/* ---------------------------------------------------------------------------
+   Tiers. Teachers meet these in the Canvas assignment architecture, so the tool
+   explains them rather than assuming them. The minutes are STARTING POINTS
+   drawn from that skill's own figures -- Tier 2 at about half a minute per
+   student, Tier 3 at about five. Every number here is editable: this is a
+   calculator, not a gate.
+--------------------------------------------------------------------------- */
 var TIER={
-  1:{name:"Tier 1 — auto-graded",       min:0,   note:"Canvas quiz or completion-scored assignment"},
-  2:{name:"Tier 2 — light touch",       min:0.5, note:"discussion or survey-mode quiz"},
-  3:{name:"Tier 3 — deep feedback",     min:5,   note:"Canvas assignment with a rubric of at most 4 criteria"},
-  4:{name:"Tier 4 — ungraded scaffold", min:0,   note:"practice, no teacher time"}
+ 1:{name:"Tier 1 — Student and material",short:"auto-graded",grade:0,
+    what:"The student works with the material and Canvas marks it. Quizzes, completion-scored practice, self-checks.",
+    when:"Use for knowledge, recall, and skill practice that has a right answer.",
+    cost:"No teacher grading time."},
+ 2:{name:"Tier 2 — Student and community",short:"light touch",grade:0.5,
+    what:"Students engage each other and the teacher reads across the group. Discussions, survey-mode reflections, module wrappers.",
+    when:"Use when the value is in the exchange, not in individual correction.",
+    cost:"Roughly half a minute per student per cycle — the teacher is scanning and steering, not marking."},
+ 3:{name:"Tier 3 — Student and teacher",short:"deep feedback",grade:5,
+    what:"Substantive work the teacher reads closely and responds to individually, against a rubric.",
+    when:"Use for the piece of work in the module that genuinely needs a teacher's judgement.",
+    cost:"Roughly five minutes per student. This is the expensive one, and the reason plans get rebalanced."},
+ 4:{name:"Tier 4 — Ungraded scaffolding",short:"no grade",grade:0,
+    what:"Practice, rehearsal, and preparation that is never collected. Copywork, drill, reading, rehearsal for recitation.",
+    when:"Use generously. Most of the real work of a classical lesson lives here.",
+    cost:"No teacher grading time."}
 };
-var WRAPPER=20; // minutes per module to review the outro wrapper
 
-// Tools named as optima-classical-pedagogy names them. These are TEACHER-facing
-// labels; the house rule is that student-facing text never names the method.
+/* Tools, named as optima-classical-pedagogy names them, each with a short
+   practical note on running it. `video` is a hook for the explainer library --
+   fill a URL in and a link appears in the plan and the panel. */
 var TOOLS=[
- ["Attention","single substantial reading, sustained task, uncluttered page"],
- ["Narration","retell after reading — oral (Grammar), written paragraph (Logic), short essay (Rhetoric)"],
- ["Copywork","copy a worthy passage exactly"],
- ["Dictation","write from hearing, prepared in advance"],
- ["Memorisation and recitation","a passage tied to this content, with a slot in weekly review"],
- ["Imitation","name the model and the rung; never a bare 'write about X'"],
- ["Copia","vary and expand expression — labelled <em>Word Study</em> for students"],
- ["Disputed question","a real question with sides, not a five-paragraph essay"],
- ["Socratic discussion","supply the opening questions"],
- ["Apprenticeship","teacher works alongside, showing the craft"]
+ {id:"attention",name:"Attention",video:"",
+  how:"Build one substantial reading or task rather than three shallow passes. Leave white space, no sidebars or interruptions competing with the text. Say plainly how long to stay with it.",
+  spec:"Read pages __ to __ without stopping, then narrate."},
+ {id:"narration",name:"Narration",video:"",
+  how:"The student retells, in their own words, what was just read — after one reading, with no pre-quizzing and no telling them what to look for. It is the default comprehension exercise here, replacing worksheets.",
+  spec:"Form by stage: oral (Grammar), a written paragraph (Logic), a short essay (Rhetoric)."},
+ {id:"copywork",name:"Copywork",video:"",
+  how:"The student transcribes a passage worth copying, by hand, exactly. Choose something defensible — poetry, a founding document, a line from the literature in hand. Present it cleanly with generous spacing.",
+  spec:"Short and frequent beats long: 5–15 minutes."},
+ {id:"dictation",name:"Dictation",video:"",
+  how:"The student writes down what is read aloud, with full accuracy. Say whether it is prepared (studied first, builds confidence) or unprepared (builds attention). Dictate in meaningful phrases, never word by word.",
+  spec:"Correct gently — self-check against the printed text, not red pen."},
+ {id:"memory",name:"Memorisation and recitation",video:"",
+  how:"Name the specific piece, tie it to the story or context it belongs to, and give it a place in the review cycle. Include an occasion to recite aloud — recitation is part of the assignment, not an extra.",
+  spec:"Distributed review across the term, not cramming."},
+ {id:"imitation",name:"Imitation",video:"",
+  how:"The student writes in the pattern of a master. Name the model and name what is being imitated — structure, voice, a figure, a genre. Diagnose which rung of the ladder this is and do not ask for a rung the course has not built.",
+  spec:"Ladder: models → memorised patterns → paraphrase → graduated exercises → original composition."},
+ {id:"copia",name:"Copia",video:"",
+  how:"The student says the same thing many ways. Name the dimension to vary — vocabulary, syntax, figure, scale, or register — and give an exact count. Vary a sentence from a text worth respecting, not a synthetic one.",
+  spec:"Labelled Word Study in anything students read."},
+ {id:"disputed",name:"Disputed question",video:"",
+  how:"A real question with genuine sides, argued and answered — not a five-paragraph essay wearing a Latin name. State the question, the strongest case each way, and what the student must do with it.",
+  spec:"Early forms in Logic stage; full essays in Rhetoric."},
+ {id:"socratic",name:"Socratic discussion",video:"",
+  how:"Supply the opening questions in the plan. A generic instruction to discuss the topic is not this tool.",
+  spec:"Write the first three questions and where you expect the conversation to turn."},
+ {id:"apprentice",name:"Apprenticeship",video:"",
+  how:"The teacher works alongside the student, showing the craft rather than describing it. Suited to studio, lab, translation, and composition.",
+  spec:"Say what the teacher does in view of the student."}
 ];
+
+/* Templates derived from the tools above. Each scaffolds a shape, not prose. */
+var TPL={
+ lesson:[
+  {id:"reading",name:"Reading lesson, closing with narration",tools:["attention","narration"],
+   blurb:"One substantial reading, then the student retells it. The default shape for literature, history and science reading.",
+   steps:["Set attention — one reading, stated length, no interruptions.",
+          "Encounter the text.",
+          "Narration, in the form set by the stage.",
+          "Teacher note: what good narration shows here."]},
+  {id:"composition",name:"Composition by imitation",tools:["imitation","copia"],
+   blurb:"Walks the student up the imitation ladder rather than asking for original work too early.",
+   steps:["Name the model and what is being imitated.",
+          "Name the rung of the ladder this assignment sits on.",
+          "The exercise itself.",
+          "Feedback focus — specific and gentle, against the tradition's standards."]},
+  {id:"skills",name:"Copywork and dictation skills lesson",tools:["copywork","dictation","attention"],
+   blurb:"Short, frequent handwriting and accuracy work on passages worth the effort.",
+   steps:["The passage, presented cleanly.",
+          "Copywork dose and conditions.",
+          "Dictation — prepared or unprepared, with pacing.",
+          "Correction protocol."]},
+  {id:"memory",name:"Memory and recitation cycle",tools:["memory","attention"],
+   blurb:"Names the piece, ties it to its story, and schedules the review and the recitation.",
+   steps:["The piece, and the story or context it belongs to.",
+          "Introduction and first rehearsal.",
+          "Review schedule across the term.",
+          "The recitation occasion."]},
+  {id:"seminar",name:"Disputed question",tools:["disputed","socratic"],
+   blurb:"A real question with sides, prepared and then argued.",
+   steps:["The question, stated plainly.",
+          "The strongest case on each side.",
+          "Preparation the student does beforehand.",
+          "What the student produces or defends."]},
+  {id:"discussion",name:"Socratic discussion",tools:["socratic","attention"],
+   blurb:"A prepared conversation with written opening questions.",
+   steps:["The text or problem in view.",
+          "Opening questions, written out.",
+          "Where the conversation is expected to turn.",
+          "What students bring, and what they leave with."]},
+  {id:"studio",name:"Studio or apprenticeship session",tools:["apprentice","attention"],
+   blurb:"The teacher works in view of the students and they work alongside.",
+   steps:["What the teacher demonstrates.",
+          "What students attempt while watching.",
+          "The sustained working stretch.",
+          "How work is shown and responded to."]}
+ ],
+ module:[
+  {id:"arc",name:"Module arc — several tools across the weeks",tools:["attention","narration","memory","imitation"],
+   blurb:"Over a module all the major tools should appear; in any one lesson, three or four well used beat all of them sketched.",
+   steps:["Week 1 — encounter and narration.",
+          "Week 2 — memory work introduced; skills practice.",
+          "Week 3 — imitation or disputed question.",
+          "Week 4 — composition, recitation, and the assessed piece."]},
+  {id:"unit",name:"Text-centred unit",tools:["attention","narration","copywork","imitation"],
+   blurb:"Built around one substantial text the students stay with.",
+   steps:["The text, and why it is worth the weeks.",
+          "Reading schedule and narration points.",
+          "Copywork and memory drawn from the text itself.",
+          "The culminating composition, imitating something in it."]}
+ ]
+};
+
+/* Module state. The default tracks are the arcs that actually recur in the
+   Optima module maps: a text being read, a craft arc, a grammar arc, memory
+   work, VR, and a column for whatever is singular about that week. */
+var MOD={tracks:[
+  {id:"t1",name:"Reading / text"},
+  {id:"t2",name:"Writing craft"},
+  {id:"t3",name:"Grammar and vocabulary"},
+  {id:"t4",name:"Memory work"},
+  {id:"t5",name:"VR"},
+  {id:"t6",name:"Special this week"}
+],cells:{},seq:7};
+
+function weeks(){return Math.max(1,Math.min(20,+$("weeks").value||9))}
+/* Phases follow the module maps: the arc moves from absorbing, through
+   analysing, to composing -- the trivium used as a shape within one module,
+   not as a fixed grade band. */
+function phaseOf(w,total){
+  var a=Math.ceil(total*0.4),b=Math.ceil(total*0.75);
+  return w<=a?"Discovery · Grammar":(w<=b?"Analysis · Logic":"Production · Rhetoric");
+}
 
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var fmt=function(m){return m<60?Math.round(m)+" min":(m/60).toFixed(1)+" hr"};
 
-var MAN=null,BUNDLE=null,picked={},mode="ondemand",items=[],tab="plan";
+var MAN=null,BUNDLE=null,picked={},items=[],assets=[],tab="plan";
 
+/* ---- data ---- */
 fetch(BASE+"bundles-manifest.json").then(function(r){return r.json()}).then(function(m){
   MAN=m;
   var subs=m.subjects.slice().sort();
@@ -189,213 +351,400 @@ fetch(BASE+"bundles-manifest.json").then(function(r){return r.json()}).then(func
 });
 
 function loadBundle(){
-  var key=$("subject").value+"|"+$("grade").value;
-  var entry=MAN.index[key];
+  var key=$("subject").value+"|"+$("grade").value,entry=MAN&&MAN.index[key];
   picked={};
-  if(!entry){BUNDLE=null;$("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">No standards published for this combination yet.</div>';render();return}
+  if(!entry){BUNDLE=null;$("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Nothing published for this combination yet.</div>';render();return}
   $("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Loading '+entry.standards+' standards…</div>';
   fetch(BASE+entry.file).then(function(r){return r.json()}).then(function(b){BUNDLE=b;drawStds();render()});
 }
-
 function drawStds(){
   var byJ={},ci={};
   BUNDLE.courses.forEach(function(c){ci[c.i]=c});
-  BUNDLE.standards.forEach(function(s){var j=ci[s[0]].j;(byJ[j]=byJ[j]||[]).push(s)});
-  var names=MAN.jurisdictions,h="";
+  BUNDLE.standards.forEach(function(s){(byJ[ci[s[0]].j]=byJ[ci[s[0]].j]||[]).push(s)});
+  var h="";
   Object.keys(byJ).sort().forEach(function(j){
-    h+='<div class="jhead">'+esc(names[j]||j)+" · "+byJ[j].length+"</div>";
+    h+='<div class="jhead">'+esc(MAN.jurisdictions[j]||j)+" · "+byJ[j].length+"</div>";
     byJ[j].forEach(function(s){
-      var withheld=s[5]&&s[5].withheld;
-      h+='<label><input type="checkbox" data-code="'+esc(s[1])+'" data-j="'+esc(j)+'">'+
-         '<span><span class="c">'+esc(s[1])+'</span> '+
-         (withheld?'<em style="color:#8fa9bf">wording at PRDE — not reproduced</em>':esc((s[2]||"").slice(0,150)))+
-         '</span></label>';
+      var w=s[5]&&s[5].withheld;
+      h+='<label><input type="checkbox" data-code="'+esc(s[1])+'" data-j="'+esc(j)+'"><span><span class="c">'+esc(s[1])+'</span> '+
+        (w?'<em style="color:#8fa9bf">wording at PRDE — not reproduced</em>':esc((s[2]||"").slice(0,150)))+'</span></label>';
     });
   });
   $("stdList").innerHTML=h;
   Array.prototype.forEach.call($("stdList").querySelectorAll("input"),function(cb){
     cb.addEventListener("change",function(){
       var code=cb.dataset.code;
-      if(cb.checked){
-        var s=BUNDLE.standards.filter(function(x){return x[1]===code})[0];
-        picked[code]={code:code,j:cb.dataset.j,text:(s&&s[2])||"",withheld:!!(s&&s[5]&&s[5].withheld)};
-      } else delete picked[code];
+      if(cb.checked){var s=BUNDLE.standards.filter(function(x){return x[1]===code})[0];
+        picked[code]={code:code,j:cb.dataset.j,text:(s&&s[2])||"",withheld:!!(s&&s[5]&&s[5].withheld)}}
+      else delete picked[code];
       render();
     });
   });
 }
 
-// tools
-$("tools").innerHTML=TOOLS.map(function(t,i){
-  return '<label><input type="checkbox" data-t="'+i+'"><span>'+t[0]+'<small>'+t[1]+'</small></span></label>'}).join("");
-
-function chosenTools(){
-  return Array.prototype.filter.call($("tools").querySelectorAll("input"),function(c){return c.checked})
-    .map(function(c){return TOOLS[+c.dataset.t]});
+/* ---- templates ---- */
+function templates(){return TPL[$("scope").value]}
+function currentTpl(){var id=$("template").value;return templates().filter(function(t){return t.id===id})[0]||templates()[0]}
+function drawTemplates(preselect){
+  var list=templates();
+  $("template").innerHTML=list.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("");
+  if(preselect)$("template").value=preselect;
+  $("tplNote").textContent=currentTpl().blurb;
+  // tick the tools this template implies, leaving anything else the teacher chose
+  var want=currentTpl().tools;
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox]"),function(cb){
+    if(want.indexOf(cb.dataset.t)>=0)cb.checked=true;
+  });
 }
 
-// assessment rows
-function addItem(tier,label,count){
-  items.push({tier:tier||1,label:label||"",count:count||1}); drawItems(); render();
+/* ---- tools ---- */
+$("tools").innerHTML=TOOLS.map(function(t){
+  return '<div class="tool" data-open="false"><label>'+
+    '<input type="checkbox" data-t="'+t.id+'"><span class="nm">'+esc(t.name)+'</span>'+
+    '<span class="q" data-q="'+t.id+'" title="How this works">?</span></label>'+
+    '<div class="body">'+esc(t.how)+'<br><em style="color:#8fa9bf">'+esc(t.spec)+'</em>'+
+    (t.video?'<a class="vid" href="'+esc(t.video)+'" target="_blank" rel="noopener">Watch a short explainer →</a>'
+            :'<span class="vid">Explainer video — coming later.</span>')+
+    '</div></div>'}).join("");
+Array.prototype.forEach.call($("tools").querySelectorAll(".q"),function(q){
+  q.addEventListener("click",function(e){
+    e.preventDefault();
+    var box=q.closest(".tool");box.dataset.open=box.dataset.open==="true"?"false":"true";
+  });
+});
+function chosenTools(){
+  return Array.prototype.filter.call($("tools").querySelectorAll("input[type=checkbox]"),function(c){return c.checked})
+    .map(function(c){return TOOLS.filter(function(t){return t.id===c.dataset.t})[0]});
+}
+
+/* ---- module: tracks and the week grid ---- */
+function drawTracks(){
+  $("trackBar").innerHTML=MOD.tracks.map(function(t){
+    return '<span class="trk"><input data-tid="'+t.id+'" value="'+esc(t.name)+'">'+
+      '<button data-rmt="'+t.id+'" title="Remove this track">&times;</button></span>'}).join("")+
+    '<button class="addtrk" id="addTrack" type="button">+ Add a track</button>';
+  Array.prototype.forEach.call($("trackBar").querySelectorAll("[data-tid]"),function(el){
+    el.addEventListener("input",function(){
+      MOD.tracks.filter(function(t){return t.id===el.dataset.tid})[0].name=el.value;
+      drawGrid();render();
+    });
+  });
+  Array.prototype.forEach.call($("trackBar").querySelectorAll("[data-rmt]"),function(b){
+    b.addEventListener("click",function(){
+      MOD.tracks=MOD.tracks.filter(function(t){return t.id!==b.dataset.rmt});
+      drawTracks();drawGrid();render();
+    });
+  });
+  $("addTrack").addEventListener("click",function(){
+    MOD.tracks.push({id:"t"+(MOD.seq++),name:"New track"});drawTracks();drawGrid();render();
+  });
+}
+
+function drawGrid(){
+  var n=weeks(),h="<tr><th class='wk'>Wk</th><th>Phase</th>"+
+    MOD.tracks.map(function(t){return "<th>"+esc(t.name)+"</th>"}).join("")+"</tr>";
+  for(var w=1;w<=n;w++){
+    h+="<tr><td class='wk'>"+w+"</td><td class='ph'>"+esc(phaseOf(w,n))+"</td>"+
+      MOD.tracks.map(function(t){
+        var k=w+"|"+t.id;
+        return "<td><textarea data-cell='"+k+"'>"+esc(MOD.cells[k]||"")+"</textarea></td>"}).join("")+"</tr>";
+  }
+  $("weekGrid").innerHTML=h;
+  Array.prototype.forEach.call($("weekGrid").querySelectorAll("[data-cell]"),function(el){
+    el.addEventListener("input",function(){MOD.cells[el.dataset.cell]=el.value;render()});
+  });
+}
+
+/* Which week does each chosen standard actually appear in? Scan the grid for
+   its code. No inference -- it reports what the teacher has written down, so a
+   standard that has not been placed anywhere shows up as unplaced. */
+function coverage(){
+  return stdRows().map(function(s){
+    var hits=[];
+    Object.keys(MOD.cells).forEach(function(k){
+      if((MOD.cells[k]||"").indexOf(s.code)>=0){var w=+k.split("|")[0];if(hits.indexOf(w)<0)hits.push(w)}
+    });
+    hits.sort(function(a,b){return a-b});
+    return {code:s.code,text:s.text,withheld:s.withheld,weeks:hits};
+  });
+}
+
+/* ---- assets ---- */
+var ASSET_KINDS=["Text or reading","Handout","VR space","Manipulative or materials","Video or audio","Slide deck","Other"];
+function addAsset(kind,desc){assets.push({kind:kind||ASSET_KINDS[0],desc:desc||""});drawAssets();render()}
+function drawAssets(){
+  $("assets").innerHTML=assets.map(function(a,i){
+    return '<div class="row"><select data-i="'+i+'" data-k="kind">'+
+      ASSET_KINDS.map(function(k){return '<option'+(a.kind===k?" selected":"")+'>'+esc(k)+'</option>'}).join("")+
+      '</select><input class="lbl" data-i="'+i+'" data-k="desc" value="'+esc(a.desc)+'" placeholder="what exactly">'+
+      '<button data-rm="'+i+'" type="button">×</button></div>'}).join("");
+  wire($("assets"),assets,drawAssets);
+}
+
+/* ---- calculator ---- */
+function addItem(tier,label,g,d){
+  items.push({tier:tier||1,label:label||"",grade:(g===undefined?TIER[tier||1].grade:g),doMin:(d===undefined?20:d)});
+  drawItems();render();
 }
 function drawItems(){
   $("items").innerHTML=items.map(function(it,i){
-    return '<div class="row"><select data-i="'+i+'" data-k="tier">'+
-      [1,2,3,4].map(function(t){return '<option value="'+t+'"'+(it.tier===t?" selected":"")+'>Tier '+t+'</option>'}).join("")+
-      '</select><input class="lbl" data-i="'+i+'" data-k="label" value="'+esc(it.label)+'" placeholder="what it is">'+
-      '<input class="num" type="number" min="1" data-i="'+i+'" data-k="count" value="'+it.count+'">'+
+    return '<div class="row"><input class="lbl" data-i="'+i+'" data-k="label" value="'+esc(it.label)+'" placeholder="what it is">'+
+      '<select data-i="'+i+'" data-k="tier">'+[1,2,3,4].map(function(t){
+        return '<option value="'+t+'"'+(it.tier===t?" selected":"")+'>Tier '+t+'</option>'}).join("")+'</select>'+
+      '<input class="num" type="number" min="0" step="0.5" data-i="'+i+'" data-k="grade" value="'+it.grade+'" title="Minutes for the teacher to grade one student\'s work">'+
+      '<input class="num" type="number" min="0" step="5" data-i="'+i+'" data-k="doMin" value="'+it.doMin+'" title="Minutes for one student to complete it">'+
       '<button data-rm="'+i+'" type="button">×</button></div>'}).join("");
-  Array.prototype.forEach.call($("items").querySelectorAll("[data-k]"),function(el){
-    el.addEventListener("input",function(){
-      var it=items[+el.dataset.i],k=el.dataset.k;
-      it[k]=(k==="label")?el.value:+el.value; render();
+  wire($("items"),items,drawItems);
+  // changing the tier resets the grading estimate to that tier's starting point
+  Array.prototype.forEach.call($("items").querySelectorAll('[data-k=tier]'),function(sel){
+    sel.addEventListener("change",function(){
+      var it=items[+sel.dataset.i];it.grade=TIER[it.tier].grade;drawItems();render();
     });
   });
-  Array.prototype.forEach.call($("items").querySelectorAll("[data-rm]"),function(b){
-    b.addEventListener("click",function(){items.splice(+b.dataset.rm,1);drawItems();render()});
+}
+function wire(root,arr,redraw){
+  Array.prototype.forEach.call(root.querySelectorAll("[data-k]"),function(el){
+    el.addEventListener("input",function(){
+      var o=arr[+el.dataset.i],k=el.dataset.k;
+      o[k]=(k==="label"||k==="desc"||k==="kind")?el.value:+el.value;
+      if(k!=="tier")render();
+    });
+  });
+  Array.prototype.forEach.call(root.querySelectorAll("[data-rm]"),function(b){
+    b.addEventListener("click",function(){arr.splice(+b.dataset.rm,1);redraw();render()});
   });
 }
-
-function budget(){
-  var roster=Math.max(1,+$("roster").value||1);
-  var perStudent=0,t3=0,t2=0;
-  items.forEach(function(it){
-    var m=TIER[it.tier].min*it.count;
-    perStudent+=m;
-    if(it.tier===3)t3+=it.count;
-    if(it.tier===2)t2+=it.count;
-  });
-  var mins=perStudent*roster+WRAPPER;
-  return {roster:roster,mins:mins,hours:mins/60,perStudent:perStudent,t3:t3,t2:t2};
+function totals(){
+  var roster=Math.max(1,+$("roster").value||1),gradeMin=0,doMin=0;
+  items.forEach(function(it){gradeMin+=(+it.grade||0);doMin+=(+it.doMin||0)});
+  return {roster:roster,perStudentGrade:gradeMin,perStudentDo:doMin,teacher:gradeMin*roster,student:doMin};
 }
 
+/* ---- render ---- */
 function render(){
-  var b=budget();
-  var flags=[];
-  if(b.t3>1) flags.push(["bad","More than one Tier 3 assessment. The 500:1 arithmetic does not carry two substantive teacher-graded pieces in one module — collapse them or move one to Tier 2."]);
-  if(mode==="ondemand"&&b.hours>12) flags.push(["bad","Above the 8–12 hour weekly ceiling for On-Demand. This is not sustainable at 500 students."]);
-  else if(mode==="ondemand"&&b.hours>8) flags.push(["warn","At the top of the 8–12 hour On-Demand range. Workable, but there is no slack."]);
-  if(!flags.length&&items.length) flags.push(["ok","Within budget for "+(mode==="live"?"Live":"On-Demand")+" delivery."]);
-  var nt=chosenTools().length;
-  if(nt>4) flags.push(["warn",nt+" tools selected. Three or four well used beat all of them sketched."]);
-  if(nt&&nt<3&&$("artifact").value!=="activity") flags.push(["warn","Fewer than three tools. A lesson usually carries three or four."]);
-
-  $("budget").innerHTML=
-    '<div><span class="big">'+(b.hours<1?Math.round(b.mins)+" min":b.hours.toFixed(1)+" hr")+'</span> '+
-    '<span style="color:#9fb6c9">of teacher time · '+b.perStudent.toFixed(1)+' min per student × '+b.roster+'</span></div>'+
-    flags.map(function(f){return '<div class="flag '+f[0]+'">'+f[1]+'</div>'}).join("");
-
-  drawDoc(b); drawPrompt(b);
+  var t=totals();
+  $("totals").innerHTML=
+    '<div class="t"><span>Teacher, to grade all of it</span><b>'+fmt(t.teacher)+'</b></div>'+
+    '<div class="t"><span>&nbsp;&nbsp;per student</span><span>'+t.perStudentGrade.toFixed(1)+' min × '+t.roster+'</span></div>'+
+    '<hr>'+
+    '<div class="t"><span>One student, to do all of it</span><b>'+fmt(t.student)+'</b></div>'+
+    '<div class="ref">Tier sets the opening estimate only — Tier 3 starts at five minutes a student because that is what close feedback against a rubric tends to cost. Change any figure to match what this actually takes you.</div>';
+  drawDoc(t);drawTiers();drawPrompt(t);
 }
 
-function stdRows(){
-  return Object.keys(picked).map(function(k){return picked[k]});
-}
+function stdRows(){return Object.keys(picked).map(function(k){return picked[k]})}
 
-function drawDoc(b){
-  var std=stdRows(),tools=chosenTools(),art=$("artifact").value,stage=$("stage").value;
-  var kinds={module:"Module plan",lesson:"Lesson plan",activity:"Activity plan",vr:"VR space handout"};
-  var title=$("title").value||"Untitled";
+function drawDoc(t){
+  if($("scope").value==="module"){return drawModuleDoc(t)}
+  var std=stdRows(),tools=chosenTools(),tpl=currentTpl(),stage=$("stage").value;
+  var scope=$("scope").value==="module"?"Module plan":"Lesson plan";
   var narr={Grammar:"oral narration",Logic:"a written paragraph of narration",Rhetoric:"a short narration essay"}[stage];
-  var studentFacing=(art==="vr");
-
-  var h='<h1>'+esc(title)+'</h1><div class="sub">'+kinds[art]+" · "+esc($("subject").value)+" · "+
-    ($("grade").value==="K"?"Kindergarten":"Grade "+$("grade").value)+" · "+stage+" stage · "+esc($("len").value)+
-    " · "+(mode==="live"?"Live":"On-Demand")+"</div>";
-
-  if(studentFacing){
-    h+='<div class="rule"><strong>Student-facing document.</strong> Do not name the method anywhere in this text — teach the skill directly with a worked example and practice. Keep VR instructions platform-agnostic: describe what students do in the space, not which buttons a particular headset or platform uses.</div>';
-  }
+  var h='<h1>'+esc($("title").value||"Untitled")+'</h1><div class="sub">'+scope+" · "+esc(tpl.name)+" · "+
+    esc($("subject").value)+" · "+($("grade").value==="K"?"Kindergarten":"Grade "+$("grade").value)+
+    " · "+stage+" stage · "+esc($("len").value)+'</div>';
 
   h+="<h3>Standards addressed</h3>";
-  if(!std.length) h+='<p style="color:#5d6b7a">Tick standards on the left and they appear here, mapped to the parts of the plan.</p>';
-  else{
-    h+="<table><tr><th>Code</th><th>Standard</th></tr>"+std.map(function(s){
+  h+=std.length?("<table><tr><th>Code</th><th>Standard</th></tr>"+std.map(function(s){
       return "<tr><td><code>"+esc(s.code)+"</code></td><td>"+
-        (s.withheld?'<em style="color:#5d6b7a">PRDE reserves this wording — read it at source; not reproduced here.</em>':esc(s.text))+
-        "</td></tr>"}).join("")+"</table>";
-  }
+        (s.withheld?'<em style="color:#5d6b7a">PRDE reserves this wording — read it at source.</em>':esc(s.text))+"</td></tr>"
+    }).join("")+"</table>")
+    :'<p style="color:#5d6b7a">Tick standards on the left.</p>';
+
+  h+="<h3>Assets needed</h3>";
+  h+=assets.length?("<ul>"+assets.map(function(a){
+      return "<li><strong>"+esc(a.kind)+".</strong> "+(a.desc?esc(a.desc):'<span style="color:#5d6b7a">— name it</span>')+"</li>"}).join("")+"</ul>")
+    :'<div class="slot">List what the teacher must have in hand: the text, handouts, the VR space, materials. Name real ones — this tool will not invent a reading for you.</div>';
+
+  h+="<h3>Shape</h3><ol>"+tpl.steps.map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+"</ol>";
+  if(tpl.tools.indexOf("narration")>=0) h+='<div class="rule">Close with '+narr+', the form this stage calls for.</div>';
 
   if(tools.length){
-    h+="<h3>Tools in use</h3><ul>"+tools.map(function(t){
-      return "<li><strong>"+t[0]+"</strong> — "+t[1]+"</li>"}).join("")+"</ul>";
-    if(!studentFacing) h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method.</div>';
+    h+="<h3>Tools in use</h3>";
+    tools.forEach(function(x){
+      h+="<p><strong>"+esc(x.name)+".</strong> "+esc(x.how)+
+         '<span class="how"><em>'+esc(x.spec)+"</em>"+
+         (x.video?' · <a href="'+esc(x.video)+'" target="_blank" rel="noopener">explainer</a>':"")+"</span></p>";
+    });
+    h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method — Copia is labelled <em>Word Study</em> for students.</div>';
   }
 
-  h+="<h3>Shape</h3><ol>"+
-     "<li><strong>Attention.</strong> One substantial reading or task. Uncluttered page.</li>"+
-     '<li><strong>Encounter.</strong> <span class="slot">Name the actual text, problem set, or artefact here. Do not invent one — this tool will not supply it.</span></li>'+
-     "<li><strong>Work.</strong> The tools above, in order.</li>"+
-     "<li><strong>Close with narration.</strong> "+narr+", by default when the lesson involves reading.</li>"+
-     "</ol>";
+  h+="<h3>Assessment and time</h3>";
+  if(items.length){
+    h+="<table><tr><th>Item</th><th>Tier</th><th>Teacher, per student</th><th>Student, to complete</th></tr>"+
+      items.map(function(it){return "<tr><td>"+esc(it.label||"—")+"</td><td>"+esc(TIER[it.tier].short)+
+        "</td><td>"+(+it.grade).toFixed(1)+" min</td><td>"+(+it.doMin)+" min</td></tr>"}).join("")+
+      "<tr><td colspan=2><strong>Totals for "+t.roster+" students</strong></td><td><strong>"+fmt(t.teacher)+
+      "</strong></td><td><strong>"+fmt(t.student)+"</strong></td></tr></table>"+
+      '<div class="rule">Graded items are Canvas-native: quizzes, discussions, and assignments with a rubric of at most four criteria.</div>';
+  } else h+='<p style="color:#5d6b7a">Add assessed items on the left to estimate teacher and student time.</p>';
 
-  h+="<h3>Memory work</h3><div class=\"slot\">A passage tied to this content, with a place in the weekly review. Name it here.</div>";
-
-  h+="<h3>Assessment and teacher time</h3>";
-  if(!items.length) h+='<p style="color:#5d6b7a">Add assessed items on the left to see the teacher-time arithmetic.</p>';
-  else{
-    h+="<table><tr><th>Item</th><th>Tier</th><th>Count</th><th>Min/student</th></tr>"+
-      items.map(function(it){return "<tr><td>"+esc(it.label||"—")+"</td><td>"+TIER[it.tier].name+
-        "</td><td>"+it.count+"</td><td>"+(TIER[it.tier].min*it.count).toFixed(1)+"</td></tr>"}).join("")+
-      "<tr><td colspan=3><strong>Total for "+b.roster+" students</strong></td><td><strong>"+
-      (b.hours<1?Math.round(b.mins)+" min":b.hours.toFixed(1)+" hr")+"</strong></td></tr></table>"+
-      '<div class="rule">Graded items are Canvas-native: quizzes, discussions, and assignments with rubrics of at most four criteria. Custom components belong on in-lesson pages, not on graded items.</div>';
-  }
+  h+="<h3>Teacher notes</h3><div class=\"slot\">Anything the plan assumes: what good work looks like here, where students usually stumble, what to say and what to leave alone.</div>";
   $("doc").innerHTML=h;
 }
 
-function drawPrompt(b){
-  var std=stdRows(),tools=chosenTools(),art=$("artifact").value;
-  var kinds={module:"module plan",lesson:"lesson plan",activity:"activity plan",vr:"student-facing VR space handout"};
+function drawModuleDoc(t){
+  var tpl=currentTpl(),tools=chosenTools(),n=weeks(),cov=coverage();
+  var h='<h1>'+esc($("title").value||"Untitled module")+"</h1><div class='sub'>Module plan · "+
+    esc(tpl.name)+" · "+esc($("subject").value)+" · "+
+    ($("grade").value==="K"?"Kindergarten":"Grade "+$("grade").value)+
+    ($("quarter").value?" · "+esc($("quarter").value):"")+" · "+n+" weeks · "+
+    $("sessions").value+" sessions a week</div>";
+
+  if($("question").value)
+    h+="<h3>The question we live with</h3><p>"+esc($("question").value)+"</p>";
+  if($("rhythm").value)
+    h+="<h3>Weekly rhythm</h3><p>"+esc($("rhythm").value)+"</p>";
+
+  h+="<h3>The arc</h3><table><tr><th>Phase</th><th>Weeks</th><th>What students are doing</th></tr>";
+  var seen={},order=[];
+  for(var w=1;w<=n;w++){var ph=phaseOf(w,n);if(!seen[ph]){seen[ph]=[];order.push(ph)}seen[ph].push(w)}
+  var doing={"Discovery · Grammar":"Absorbing — encountering the text, gathering, memorising.",
+             "Analysis · Logic":"Analysing — comparing, tracing causes, arguing a first position.",
+             "Production · Rhetoric":"Composing — assembling, drafting, defending, performing."};
+  order.forEach(function(ph){
+    h+="<tr><td><strong>"+esc(ph)+"</strong></td><td>"+seen[ph][0]+"–"+seen[ph][seen[ph].length-1]+
+       "</td><td>"+esc(doing[ph])+"</td></tr>"});
+  h+="</table>";
+
+  h+="<h3>Week by week</h3><table><tr><th>Wk</th>"+
+     MOD.tracks.map(function(x){return "<th>"+esc(x.name)+"</th>"}).join("")+"</tr>";
+  var anyCell=false;
+  for(var w2=1;w2<=n;w2++){
+    h+="<tr><td><strong>"+w2+"</strong></td>"+MOD.tracks.map(function(x){
+      var v=MOD.cells[w2+"|"+x.id]||"";if(v)anyCell=true;
+      return "<td>"+(v?esc(v).replace(/
+/g,"<br>"):'<span style="color:#b6c3ce">—</span>')+"</td>"}).join("")+"</tr>";
+  }
+  h+="</table>";
+  if(!anyCell) h+='<div class="slot">Fill the grid on the <strong>Week by week</strong> tab. Write a standard code into a cell and it will show as covered below.</div>';
+
+  h+="<h3>Standards and where they close</h3>";
+  if(!cov.length) h+='<p style="color:#5d6b7a">Tick standards on the left.</p>';
+  else{
+    h+="<table><tr><th>Code</th><th>Standard</th><th>Closes in</th></tr>"+cov.map(function(c){
+      return "<tr><td><code>"+esc(c.code)+"</code></td><td>"+
+        (c.withheld?'<em style="color:#5d6b7a">PRDE reserves this wording — read it at source.</em>':esc(c.text))+
+        "</td><td>"+(c.weeks.length?("Week "+c.weeks.join(", ")):'<span style="color:#8a5a00">not placed yet</span>')+
+        "</td></tr>"}).join("")+"</table>";
+    var un=cov.filter(function(c){return !c.weeks.length}).length;
+    if(un) h+='<div class="rule">'+un+' standard'+(un===1?" has":"s have")+
+      " no week yet. Put the code in a grid cell where it is genuinely taught — this table reports what you wrote, it does not guess.</div>";
+  }
+
+  h+="<h3>Assets needed</h3>";
+  h+=assets.length?("<ul>"+assets.map(function(a){
+      return "<li><strong>"+esc(a.kind)+".</strong> "+(a.desc?esc(a.desc):'<span style="color:#5d6b7a">— name it</span>')+"</li>"}).join("")+"</ul>")
+    :'<div class="slot">List what the teacher must have in hand across the module. Name real ones — this tool will not invent a text.</div>';
+
+  if(tools.length){
+    h+="<h3>Tools across the module</h3>";
+    tools.forEach(function(x){h+="<p><strong>"+esc(x.name)+".</strong> "+esc(x.how)+
+      '<span class="how"><em>'+esc(x.spec)+"</em></span></p>"});
+    h+='<div class="rule">Over a module all the major tools should appear; in any one lesson three or four well used beat all of them sketched. These names are teacher-facing — student text never names the method.</div>';
+  }
+
+  h+="<h3>Module assessment and time</h3>";
+  if(items.length){
+    h+="<table><tr><th>Item</th><th>Tier</th><th>Teacher, per student</th><th>Student, to complete</th></tr>"+
+      items.map(function(it){return "<tr><td>"+esc(it.label||"—")+"</td><td>"+esc(TIER[it.tier].short)+
+        "</td><td>"+(+it.grade).toFixed(1)+" min</td><td>"+(+it.doMin)+" min</td></tr>"}).join("")+
+      "<tr><td colspan=2><strong>Totals for "+t.roster+" students</strong></td><td><strong>"+fmt(t.teacher)+
+      "</strong></td><td><strong>"+fmt(t.student)+"</strong></td></tr></table>";
+  } else h+='<p style="color:#5d6b7a">Add assessed items on the left.</p>';
+  h+='<div class="rule">Modules open and close with a Canvas-native wrapper — an intro quiz and an outro quiz — with graded work as quizzes, discussions, or assignments carrying a rubric of at most four criteria.</div>';
+
+  h+="<h3>Teacher notes</h3><div class=\"slot\">What the module assumes, where students usually stumble, and what to leave alone.</div>";
+  $("doc").innerHTML=h;
+}
+
+function drawTiers(){
+  var h='<h1>What the tiers mean</h1><div class="sub">From Optima\'s Canvas assignment architecture. The tier tells you who is doing the responding, which is what drives the cost.</div>';
+  [1,2,3,4].forEach(function(n){
+    var t=TIER[n];
+    h+="<h3>"+esc(t.name)+"</h3><p>"+esc(t.what)+"</p><p><strong>When to use it.</strong> "+esc(t.when)+
+       "</p><p><strong>What it costs.</strong> "+esc(t.cost)+"</p>";
+  });
+  h+='<div class="rule">The calculator opens with these figures and lets you change them. They are what close feedback tends to cost, not a limit — a teacher with thirty students and a teacher with five hundred are doing the same arithmetic with very different answers.</div>';
+  $("tierDoc").innerHTML=h;
+}
+
+function drawPrompt(t){
+  var std=stdRows(),tools=chosenTools(),tpl=currentTpl();
   var L=[];
-  L.push("Write a "+kinds[art]+" for Optima Academy Online.");
+  L.push("Write a "+($("scope").value==="module"?"module plan":"lesson plan")+" for Optima Academy Online.");
   L.push("");
+  L.push("TEMPLATE: "+tpl.name+" — "+tpl.blurb);
   L.push("SUBJECT: "+$("subject").value+"   GRADE: "+$("grade").value+"   TRIVIUM STAGE: "+$("stage").value);
   L.push("TITLE: "+($("title").value||"(choose one)")+"   LENGTH: "+$("len").value);
-  L.push("DELIVERY: "+(b.roster>100?"On-Demand (asynchronous)":"Live")+" — teacher serves "+b.roster+" students.");
-  L.push("TEACHER-TIME BUDGET: "+(b.hours<1?Math.round(b.mins)+" minutes":b.hours.toFixed(1)+" hours")+
-         " total. Do not propose work that exceeds it.");
+  L.push("TIME ALREADY ESTIMATED: "+fmt(t.teacher)+" of teacher grading for "+t.roster+
+         " students; "+fmt(t.student)+" of student work. Stay inside that.");
   L.push("");
-  L.push("STANDARDS TO ADDRESS — use these codes exactly; do not invent or alter any code:");
-  if(!std.length) L.push("  (none selected yet)");
-  std.forEach(function(s){
-    L.push("  "+s.code+" — "+(s.withheld?"[wording reserved by PRDE; consult the source document]":s.text));
-  });
+  if($("scope").value==="module"){
+    var n=weeks();
+    L.push("MODULE SHAPE: "+n+" weeks, "+$("sessions").value+" sessions a week"+
+           ($("quarter").value?", "+$("quarter").value:"")+".");
+    if($("question").value)L.push("THE QUESTION THE MODULE LIVES WITH: "+$("question").value);
+    if($("rhythm").value)L.push("WEEKLY RHYTHM: "+$("rhythm").value);
+    L.push("");
+    L.push("WEEK BY WEEK AS PLANNED (fill gaps, do not overwrite what is here):");
+    for(var w=1;w<=n;w++){
+      var bits=MOD.tracks.map(function(t){var v=MOD.cells[w+"|"+t.id];return v?(t.name+": "+v.replace(/
+/g," ")):null})
+        .filter(Boolean);
+      L.push("  Week "+w+" ("+phaseOf(w,n)+")"+(bits.length?" — "+bits.join(" | "):" — not yet planned"));
+    }
+    L.push("");
+    var un=coverage().filter(function(c){return !c.weeks.length});
+    if(un.length){
+      L.push("STANDARDS NOT YET PLACED IN A WEEK — say where each belongs:");
+      un.forEach(function(c){L.push("  "+c.code)});
+      L.push("");
+    }
+  }
+  L.push("SHAPE TO FOLLOW:");
+  tpl.steps.forEach(function(s,i){L.push("  "+(i+1)+". "+s)});
   L.push("");
+  L.push("STANDARDS — use these codes exactly; do not invent or alter a code:");
+  if(!std.length)L.push("  (none selected yet)");
+  std.forEach(function(s){L.push("  "+s.code+" — "+(s.withheld?"[wording reserved by PRDE; consult the source]":s.text))});
+  L.push("");
+  if(assets.length){L.push("ASSETS THE TEACHER HAS:");assets.forEach(function(a){L.push("  "+a.kind+": "+(a.desc||"(unnamed)"))});L.push("")}
   if(tools.length){
-    L.push("CLASSICAL TOOLS TO USE (teacher-facing names):");
-    tools.forEach(function(t){L.push("  "+t[0]+" — "+t[1].replace(/<[^>]+>/g,""))});
+    L.push("CLASSICAL TOOLS TO USE, and how each is run:");
+    tools.forEach(function(x){L.push("  "+x.name+" — "+x.how+" "+x.spec)});
     L.push("");
   }
   L.push("HOUSE RULES:");
   L.push("- Say teacher, never facilitator.");
   L.push("- Name weeks, never days of the week.");
-  L.push("- Student-facing text must not name the method. Teach the skill with a worked example, then practice.");
+  L.push("- Student-facing text must not name the method. Teach the skill with a worked example, then practice. Copia is called Word Study for students.");
   L.push("- Do not invent texts, quotations, sources, or standard codes. Where a real text is needed, leave a named slot saying what is required.");
   L.push("- Lead with a visual or a concrete example, not a wall of prose.");
-  L.push("- Graded items are Canvas-native: quizzes, discussions, assignments with rubrics of at most four criteria.");
+  L.push("- Graded items are Canvas-native: quizzes, discussions, assignments with a rubric of at most four criteria.");
   L.push("- No reassurance or filler panels. Every block carries instruction.");
-  if(art==="vr") L.push("- Keep VR instructions platform-agnostic: describe what the student does in the space, not platform-specific controls.");
-  L.push("");
-  L.push("Close the lesson with narration by default when it involves reading: "+
-    ({Grammar:"oral",Logic:"a written paragraph",Rhetoric:"a short essay"}[$("stage").value])+".");
+  if(assets.some(function(a){return a.kind==="VR space"}))
+    L.push("- Keep VR instructions platform-agnostic: what the student does in the space, not platform-specific controls.");
   $("prompt").textContent=L.join("\n");
 }
 
-// wiring
+/* ---- wiring ---- */
 ["subject","grade"].forEach(function(id){$(id).addEventListener("change",loadBundle)});
-["title","len","stage","artifact","roster"].forEach(function(id){$(id).addEventListener("input",render);$(id).addEventListener("change",render)});
-$("tools").addEventListener("change",render);
-$("addItem").addEventListener("click",function(){addItem(1,"",1)});
-Array.prototype.forEach.call($("mode").querySelectorAll("button"),function(b){
-  b.addEventListener("click",function(){
-    mode=b.dataset.m;
-    Array.prototype.forEach.call($("mode").querySelectorAll("button"),function(x){
-      x.setAttribute("aria-pressed",String(x===b))});
-    $("roster").value = mode==="live" ? 30 : 500;
-    render();
-  });
+$("scope").addEventListener("change",function(){
+  var mod=$("scope").value==="module";
+  $("modOnly").style.display=mod?"block":"none";
+  $("weeksTab").style.display=mod?"":"none";
+  if(!mod&&tab==="weeks"){document.querySelector('.tabs button[data-p=plan]').click()}
+  drawTemplates();if(mod){drawTracks();drawGrid()}render();
 });
+["weeks","sessions"].forEach(function(id){
+  $(id).addEventListener("input",function(){drawGrid();render()})});
+["quarter","question","rhythm"].forEach(function(id){$(id).addEventListener("input",render)});
+$("template").addEventListener("change",function(){drawTemplates($("template").value);render()});
+["title","len","stage","roster"].forEach(function(id){$(id).addEventListener("input",render)});
+$("stage").addEventListener("change",render);
+$("tools").addEventListener("change",render);
+$("addItem").addEventListener("click",function(){addItem(1,"",undefined,20)});
+$("addAsset").addEventListener("click",function(){addAsset()});
 Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(b){
   b.addEventListener("click",function(){
     tab=b.dataset.p;
@@ -404,27 +753,29 @@ Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(
   });
 });
 $("copy").addEventListener("click",function(){
-  var t = tab==="prompt" ? $("prompt").textContent : $("doc").innerText;
-  navigator.clipboard.writeText(t).then(function(){
+  var el=tab==="prompt"?$("prompt"):(tab==="tiers"?$("tierDoc"):$("doc"));
+  var txt=tab==="prompt"?el.textContent:el.innerText;
+  navigator.clipboard.writeText(txt).then(function(){
     var w=$("copy").textContent;$("copy").textContent="Copied";setTimeout(function(){$("copy").textContent=w},1500)});
 });
 $("dl").addEventListener("click",function(){
   var name=($("title").value||"plan").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
   var blob,fn;
   if(tab==="prompt"){blob=new Blob([$("prompt").textContent],{type:"text/plain;charset=utf-8"});fn=name+"-prompt.txt"}
-  else{
+  else{var src=tab==="tiers"?$("tierDoc"):$("doc");
     blob=new Blob(['<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"></head><body>'+
-      $("doc").innerHTML+'</body></html>'],{type:"application/msword"});
-    fn=name+".doc";
-  }
+      src.innerHTML+"</body></html>"],{type:"application/msword"});
+    fn=(tab==="tiers"?"assignment-tiers":name)+".doc"}
   var u=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=u;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(u)},1000);
 });
 
-addItem(1,"Reading check",1);
-addItem(3,"Narration",1);
-render();
+drawTemplates();
+addAsset("Text or reading","");
+addItem(4,"Reading and preparation",0,30);
+addItem(3,"Narration",5,20);
+drawItems();drawAssets();render();
 })();
 </script>
 </body>
