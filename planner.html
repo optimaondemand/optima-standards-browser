@@ -76,6 +76,48 @@
   .totals hr{border:none;border-top:1px solid #2c4d6e;margin:7px 0}
   .ref{font-size:11.5px;color:#8fa9bf;margin-top:8px;line-height:1.5}
 
+  .shelf{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+  .shelf button{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--navy-soft);font-weight:600}
+  .shelf button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .shelf .n{opacity:.65;font-weight:400}
+  .find{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .find input{flex:1;min-width:220px;font:inherit;font-size:14px;padding:8px 11px;border-radius:6px;
+    border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .find .cnt{font-size:12.5px;color:var(--muted)}
+  .find label.file{font-size:12.5px;color:var(--navy-soft);cursor:pointer;text-decoration:underline}
+  .find label.file input{display:none}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:0;margin-bottom:11px;overflow:hidden}
+  .card > .hd{display:flex;gap:11px;align-items:baseline;padding:13px 16px;cursor:pointer}
+  .card .ttl{flex:1;font-size:15.5px;font-weight:600;color:var(--navy);line-height:1.35}
+  .card .makes{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:3px}
+  .card .tag{flex:none;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:3px 8px;
+    border-radius:4px;background:#eef4f8;color:var(--navy-soft);font-weight:700;white-space:nowrap}
+  .card .tag.t3{background:#fdf1dd;color:#8a5a00}
+  .card .bd{display:none;padding:0 16px 15px;border-top:1px solid var(--line)}
+  .card[data-open=true] .bd{display:block}
+  .card .mv{margin:11px 0 3px;font-size:14px;color:var(--ink)}
+  .card .mv b{color:var(--navy-soft);font-weight:600}
+  .card .why{font-size:13.5px;color:#33414f;margin:7px 0 0;line-height:1.55}
+  .card .prov{margin-top:11px;font-size:12.5px;color:var(--muted);line-height:1.6}
+  .card .prov b{color:var(--navy-soft)}
+  .card .prov li{margin:0}
+  .card .slots{margin-top:13px;padding-top:11px;border-top:1px dashed var(--line)}
+  .card .slots .fl{display:block;margin-bottom:8px}
+  .card .slots .fl > span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--navy-soft);margin-bottom:3px;font-weight:600}
+  .card .slots input,.card .slots select,.card .slots textarea{width:100%;font:inherit;font-size:13.5px;
+    padding:6px 9px;border-radius:5px;border:1px solid var(--line);background:#fbfdfe;color:var(--ink)}
+  .card .use{margin-top:11px;font:inherit;font-size:13px;font-weight:600;padding:7px 15px;border-radius:6px;
+    border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+  .card .use[data-on=true]{background:var(--cyan);border-color:var(--cyan);color:#04212b}
+  table.rawt{border-collapse:collapse;width:100%;font-size:13px;background:#fff}
+  table.rawt th,table.rawt td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+  table.rawt th{background:#f2f6f9;font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--navy-soft);position:sticky;top:0}
+  table.rawt td.p{text-align:right;white-space:nowrap;color:var(--muted)}
+
   main{padding:0 0 40px;min-width:0}
   .tabbar{display:flex;justify-content:space-between;align-items:center;background:var(--navy);flex-wrap:wrap}
   .tabs{display:flex;padding:0 18px}
@@ -179,6 +221,7 @@
     <div class="tabs" role="tablist">
       <button data-p="plan" aria-selected="true">Plan</button>
       <button data-p="weeks" aria-selected="false" id="weeksTab" style="display:none">Week by week</button>
+      <button data-p="ideas" aria-selected="false">Project ideas</button>
       <button data-p="tiers" aria-selected="false">What the tiers mean</button>
       <button data-p="prompt" aria-selected="false">Prompt for Copilot</button>
     </div>
@@ -189,6 +232,19 @@
     <p class="hint">One row per week. Each column is something you are tracking week to week — the reading, writing, grammar, memory work, VR. Rename a column, add one, or delete one. Type straight into the grid.</p>
     <div id="trackBar" style="margin-bottom:12px"></div>
     <div style="overflow-x:auto"><table class="grid" id="weekGrid"></table></div>
+  </div>
+  <div class="pane" data-p="ideas">
+    <p class="hint">Shapes taken from work that actually ran in these courses, abstracted so they
+      travel. Nothing here is filtered by your subject on purpose &mdash; the science gallery form
+      landing in front of an English teacher is where an idea comes from. Fill a form's slots and
+      pull it into the plan.</p>
+    <div class="shelf" id="shelf"></div>
+    <div class="find">
+      <input id="ideaFind" placeholder="Find a form, a routine, or anything in the raw material&hellip;">
+      <span class="cnt" id="ideaCnt"></span>
+      <label class="file">load your own bank file<input type="file" id="bankFile" accept=".json"></label>
+    </div>
+    <div id="ideaList"><p style="color:#5d6b7a">Loading the bank&hellip;</p></div>
   </div>
   <div class="pane" data-p="tiers"><div class="doc" id="tierDoc"></div></div>
   <div class="pane" data-p="prompt">
@@ -817,6 +873,211 @@ function render(){
 
 function stdRows(){return Object.keys(picked).map(function(k){return picked[k]})}
 
+/* ---------------------------------------------------------------------------
+   The project-ideas bank. A separate JSON file, deliberately: the source can be
+   swapped, edited, or replaced with a local file without touching this page,
+   and the whole tool clones by copying two files and changing one line.
+
+   Deliberately NOT filtered by subject or grade. The bank sorts by kind and
+   shows subject as provenance only.
+--------------------------------------------------------------------------- */
+var BANK=null,SHELF="forms",IDEA={},CHOSEN=null,bankLoaded=false;
+
+function loadBank(){
+  if(bankLoaded)return; bankLoaded=true;
+  fetch(BASE+"ideas-bank.json").then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return r.json();
+  }).then(function(b){BANK=b;drawShelf();drawIdeas()}).catch(function(e){
+    $("ideaList").innerHTML='<p style="color:#a12b2b">Could not load the ideas bank: '+
+      esc(e.message)+'. You can still load a bank file from your computer above.</p>';
+  });
+}
+
+function shelves(){
+  if(!BANK)return [];
+  return [["forms","Project and assessment forms",BANK.forms.length],
+          ["routines","Routines",BANK.routines.length],
+          ["raw","Raw material",BANK.raw.length],
+          ["blank","Write your own",1]];
+}
+function drawShelf(){
+  $("shelf").innerHTML=shelves().map(function(s){
+    return '<button type="button" data-sh="'+s[0]+'" aria-pressed="'+(SHELF===s[0])+'">'+
+      esc(s[1])+' <span class="n">'+s[2]+'</span></button>'}).join("");
+  Array.prototype.forEach.call($("shelf").querySelectorAll("[data-sh]"),function(b){
+    b.addEventListener("click",function(){SHELF=b.dataset.sh;drawShelf();drawIdeas()});
+  });
+}
+
+function ideaVal(id,k){return (IDEA[id+"."+k]||"").toString().trim()}
+
+/* A form's card. The provenance is the point of the whole exercise -- it says
+   this shape is not a suggestion, it is a thing that ran, here, and here. */
+function slotHTML(f,fl){
+  var id=f.id+"."+fl.k,v=IDEA[id]||"",inner;
+  if(fl.t==="sel"){
+    inner='<select data-idea="'+id+'"><option value="">&mdash;</option>'+
+      (fl.opts||[]).map(function(o){return '<option'+(v===o?" selected":"")+'>'+esc(o)+'</option>'}).join("")+
+      '</select>';
+  }else if(fl.t==="area"){
+    inner='<textarea data-idea="'+id+'" rows="2" placeholder="'+esc(fl.ph||"")+'">'+esc(v)+'</textarea>';
+  }else if(fl.t==="num"){
+    inner='<input type="number" min="0" data-idea="'+id+'" value="'+esc(v)+'" placeholder="'+esc(fl.ph||"")+'">';
+  }else{
+    inner='<input data-idea="'+id+'" value="'+esc(v)+'" placeholder="'+esc(fl.ph||"")+'">';
+  }
+  return '<label class="fl"><span>'+esc(fl.l)+'</span>'+inner+'</label>';
+}
+
+function formCard(f){
+  var on=CHOSEN&&CHOSEN===f.id;
+  var h='<div class="card" data-open="'+(on?"true":"false")+'" data-card="'+esc(f.id)+'">'+
+    '<div class="hd"><span class="ttl">'+esc(f.name)+
+    (f.makes?'<span class="makes">'+esc(f.makes)+'</span>':'')+'</span>'+
+    '<span class="tag'+(f.tier===3?" t3":"")+'">Tier '+f.tier+'</span>'+
+    (f.seen_in?'<span class="tag">ran '+f.seen_in+'&times;</span>':'')+'</div>'+
+    '<div class="bd">';
+  if(f.move) h+='<p class="mv"><b>The move.</b> '+esc(f.move)+'</p>';
+  if(f.why)  h+='<p class="why">'+esc(f.why)+'</p>';
+  if(f.provenance&&f.provenance.length){
+    h+='<div class="prov"><b>Abstracted from</b><ul>'+f.provenance.map(function(p){
+      return '<li>'+esc(p.name)+' &mdash; '+esc(p.course)+
+        (p.pts?' &middot; '+p.pts+' pts':'')+'</li>'}).join("")+'</ul></div>';
+  }
+  h+='<div class="slots">'+f.fields.map(function(fl){return slotHTML(f,fl)}).join("")+
+     '<button class="use" type="button" data-use="'+esc(f.id)+'" data-on="'+(on?"true":"false")+'">'+
+     (on?"In the plan &mdash; click to remove":"Use this in the plan")+'</button></div>';
+  return h+'</div></div>';
+}
+
+function routineCard(r){
+  var h='<div class="card" data-open="false" data-card="'+esc(r.id)+'">'+
+    '<div class="hd"><span class="ttl">'+esc(r.name)+
+    '<span class="makes">Ran '+r.uses+' times across '+r.courses.length+
+    (r.courses.length===1?' course':' courses')+'.</span></span>'+
+    '<span class="tag'+(r.tier===3?" t3":"")+'">Tier '+r.tier+'</span></div><div class="bd">';
+  if(r.quiz){
+    h+='<p class="why">A quiz. Its contents are deliberately not published here.</p>';
+  }else if(r.desc){
+    h+='<p class="why">'+esc(r.desc)+'</p>';
+  }
+  h+='<div class="prov"><b>Used in</b><ul>'+r.courses.map(function(c){
+    return '<li>'+esc(c)+'</li>'}).join("")+'</ul></div>';
+  return h+'</div></div>';
+}
+
+function drawIdeas(){
+  if(!BANK){return}
+  var q=($("ideaFind").value||"").toLowerCase().trim(),h="",n=0;
+  function hit(){var s=Array.prototype.join.call(arguments," ").toLowerCase();
+    return !q||s.indexOf(q)>=0}
+
+  if(SHELF==="forms"){
+    // sorted by kind, then by how widely the shape actually ran
+    var order={project:0,discussion:1,recording:2,assessment:3};
+    var fs=BANK.forms.slice().sort(function(a,b){
+      return (order[a.kind]-order[b.kind])||(b.seen_in-a.seen_in)});
+    var lastKind=null;
+    fs.forEach(function(f){
+      if(!hit(f.name,f.makes,f.move,f.why,(f.subjects||[]).join(" ")))return;
+      n++;
+      if(f.kind!==lastKind){lastKind=f.kind;
+        h+='<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#1b3f60;'+
+           'margin:18px 0 9px;padding-bottom:5px;border-bottom:2px solid #2ec4d6">'+
+           esc({project:"Projects",discussion:"Discussion",recording:"Recordings",
+                assessment:"Assessments"}[f.kind]||f.kind)+'</h3>'}
+      h+=formCard(f);
+    });
+  }else if(SHELF==="routines"){
+    BANK.routines.forEach(function(r){
+      if(!hit(r.name,r.desc,r.courses.join(" ")))return;
+      n++;h+=routineCard(r);
+    });
+  }else if(SHELF==="raw"){
+    var rows=BANK.raw.filter(function(x){return hit(x.name,x.course,x.group)});
+    n=rows.length;
+    h='<p class="hint">Every remaining instrument, as raw material. Names and provenance only'+
+      ' &mdash; no descriptions, because a small practice task cannot honestly be turned into an'+
+      ' idea. Use it to see what has been tried.</p>'+
+      '<div style="max-height:640px;overflow:auto"><table class="rawt"><tr><th>Name</th>'+
+      '<th>Course</th><th>Group</th><th>Kind</th><th>Pts</th></tr>'+
+      rows.slice(0,600).map(function(x){
+        return '<tr><td>'+esc(x.name)+'</td><td>'+esc(x.course)+'</td><td>'+esc(x.group)+
+          '</td><td>'+esc(x.kind)+'</td><td class="p">'+(x.pts||"")+'</td></tr>'}).join("")+
+      '</table></div>';
+    if(rows.length>600) h+='<p class="hint">Showing the first 600 of '+rows.length+
+      '. Search to narrow it &mdash; nothing is hidden, the table is just capped so the page stays quick.</p>';
+  }else{
+    n=1;h=formCard(BANK.blank);
+  }
+
+  $("ideaCnt").textContent=q?(n+" of "+(SHELF==="raw"?BANK.raw.length:
+    SHELF==="routines"?BANK.routines.length:SHELF==="forms"?BANK.forms.length:1)+" match"):"";
+  $("ideaList").innerHTML=h||'<p style="color:#5d6b7a">Nothing matches that.</p>';
+  wireIdeas();
+}
+
+function wireIdeas(){
+  Array.prototype.forEach.call($("ideaList").querySelectorAll(".hd"),function(hd){
+    hd.addEventListener("click",function(){
+      var c=hd.closest(".card");c.dataset.open=c.dataset.open==="true"?"false":"true";
+    });
+  });
+  Array.prototype.forEach.call($("ideaList").querySelectorAll("[data-idea]"),function(el){
+    var ev=el.tagName==="SELECT"?"change":"input";
+    el.addEventListener(ev,function(){IDEA[el.dataset.idea]=el.value;render()});
+    el.addEventListener("click",function(e){e.stopPropagation()});
+  });
+  Array.prototype.forEach.call($("ideaList").querySelectorAll("[data-use]"),function(b){
+    b.addEventListener("click",function(e){
+      e.stopPropagation();
+      var id=b.dataset.use;
+      if(CHOSEN===id){CHOSEN=null}
+      else{
+        CHOSEN=id;
+        var f=chosenForm();
+        // the form's own title and student time seed the plan rather than
+        // overwriting anything the teacher has already typed
+        if(f&&!$("title").value)$("title").value=f.name;
+        if(f&&f.student_min)addItem(f.tier||3,f.name,undefined,f.student_min);
+      }
+      drawIdeas();render();
+    });
+  });
+}
+
+function chosenForm(){
+  if(!BANK||!CHOSEN)return null;
+  if(BANK.blank&&BANK.blank.id===CHOSEN)return BANK.blank;
+  return BANK.forms.filter(function(f){return f.id===CHOSEN})[0]||null;
+}
+
+/* One block for the chosen form in the plan: what it is, what the teacher has
+   filled, and a named slot for whatever is still open -- the same discipline the
+   pedagogical moves follow. */
+function formBlock(f){
+  var h="<h3>Project form</h3><h4>"+esc(f.name)+"</h4>";
+  if(f.makes)h+="<p>"+esc(f.makes)+'<span class="how"><em>'+esc(f.move||"")+"</em></span></p>";
+  var filled=[],empty=[];
+  f.fields.forEach(function(fl){
+    var v=ideaVal(f.id,fl.k);
+    if(v)filled.push([fl.l,v]); else empty.push(fl.l);
+  });
+  if(filled.length)h+='<table class="mv">'+filled.map(function(r){
+    return "<tr><th>"+esc(r[0])+"</th><td>"+esc(r[1]).split(String.fromCharCode(10)).join("<br>")+
+      "</td></tr>"}).join("")+"</table>";
+  if(empty.length)h+='<div class="slot"><strong>Still to name:</strong> '+
+    empty.map(esc).join("; ")+".</div>";
+  if(f.provenance&&f.provenance.length)
+    h+='<div class="rule">This shape ran as '+esc(f.provenance[0].name)+' in '+
+       esc(f.provenance[0].course)+
+       (f.seen_in>1?', and in '+(f.seen_in-1)+' other place'+(f.seen_in>2?"s":""):"")+
+       '. It is a shape to fill, not a thing to copy.</div>';
+  return h;
+}
+
+
 /* One block per move in the document: the guidance, then what the teacher has
    actually specified, then a named slot for whatever is still missing. The slot
    is deliberate -- an empty field must read as an open decision, not as a thing
@@ -875,6 +1136,9 @@ function drawDoc(t){
     h+='<div class="rule">These names are teacher-facing. In anything students read, teach the skill directly and do not name the method'+
        (named?' — Copia is labelled <em>Word Study</em> for students':'')+'.</div>';
   }
+
+  var cf=chosenForm();
+  if(cf) h+=formBlock(cf);
 
   h+="<h3>Assessment and time</h3>";
   if(items.length){
@@ -939,6 +1203,9 @@ function drawModuleDoc(t){
     tools.forEach(function(x){h+=moveBlock(x)});
     h+='<div class="rule">Use three or four moves well in one lesson. Across a whole module, most of them should turn up somewhere. These names are teacher-facing — student text never names the method.</div>';
   }
+
+  var cfm=chosenForm();
+  if(cfm) h+=formBlock(cfm);
 
   h+="<h3>Module assessment and time</h3>";
   if(items.length){
@@ -1027,6 +1294,23 @@ function drawPrompt(t){
       L.push("");
     }
   }
+  var pf=chosenForm();
+  if(pf){
+    L.push("PROJECT FORM TO BUILD ON: "+pf.name);
+    if(pf.makes)L.push("  What the student makes: "+pf.makes);
+    if(pf.move) L.push("  The move it requires: "+pf.move);
+    var pgap=[];
+    pf.fields.forEach(function(fl){
+      var v=ideaVal(pf.id,fl.k);
+      if(v)L.push("  "+fl.l+": "+v.split(String.fromCharCode(10)).join(" / "));
+      else pgap.push(fl.l);
+    });
+    if(pgap.length)L.push("  NOT YET SPECIFIED, propose each: "+pgap.join("; "));
+    if(pf.provenance&&pf.provenance.length)
+      L.push("  This shape already ran as: "+pf.provenance[0].name+" ("+pf.provenance[0].course+
+             "). Build a NEW instance of the shape; do not reproduce that one.");
+    L.push("");
+  }
   L.push("HOUSE RULES:");
   L.push("- Say teacher, never facilitator.");
   L.push("- Name weeks, never days of the week.");
@@ -1061,9 +1345,27 @@ $("addAsset").addEventListener("click",function(){addAsset()});
 Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(b){
   b.addEventListener("click",function(){
     tab=b.dataset.p;
+    if(tab==="ideas")loadBank();
     Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(x){x.setAttribute("aria-selected",String(x===b))});
     Array.prototype.forEach.call(document.querySelectorAll(".pane"),function(p){p.dataset.on=String(p.dataset.p===tab)});
   });
+});
+$("ideaFind").addEventListener("input",drawIdeas);
+$("bankFile").addEventListener("change",function(){
+  var f=$("bankFile").files&&$("bankFile").files[0];
+  if(!f)return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    try{
+      var b=JSON.parse(fr.result);
+      if(!b.forms)throw new Error("that file has no forms array");
+      BANK=b;CHOSEN=null;drawShelf();drawIdeas();render();
+    }catch(e){
+      $("ideaList").innerHTML='<p style="color:#a12b2b">That file could not be read as a bank: '+
+        esc(e.message)+'</p>';
+    }
+  };
+  fr.readAsText(f);
 });
 $("copy").addEventListener("click",function(){
   var el=tab==="prompt"?$("prompt"):(tab==="tiers"?$("tierDoc"):$("doc"));

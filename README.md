@@ -98,3 +98,79 @@ Teachers reaching it through Canvas are already signed in, so there is no separa
 login. Note that the Pages URL itself is publicly reachable — the iframe removes a
 second sign-in, it does not restrict access. That is fine here: everything
 published is public-records material.
+
+## The project-ideas bank
+
+`planner.html` has a **Project ideas** tab holding shapes abstracted from work
+that actually ran in the Canvas courses. Each form is a shape to fill, not a
+thing to copy: it names what the student makes, the thinking move it requires,
+when to reach for it, a set of slots the teacher fills, and the real instruments
+it was abstracted from. Fill the slots and a form can be pulled into the plan,
+where it joins the document, the Copilot prompt and the time calculator.
+
+Four shelves:
+
+| Shelf | What is in it |
+|---|---|
+| Project and assessment forms | 56 transferable shapes, with 226 slots between them |
+| Routines | 36 recurring instruments, as fill-and-go templates |
+| Raw material | 940 remaining instruments: names and provenance only |
+| Write your own | An empty form with the same slots |
+
+Nothing is filtered by subject or grade, deliberately. The bank sorts by kind and
+shows subject as provenance, because a science teacher meeting the English
+disagreement-letter form is where an idea comes from.
+
+### Refreshing it
+
+The bank is a snapshot. It refreshes when you run the two scripts and push:
+
+```
+python harvest-canvas.py      # reads Canvas, writes harvest.json
+python build-bank.py          # writes ideas-bank.json
+python probe-ideas.py         # 32 checks against a real browser
+git add ideas-bank.json && git commit -m "refresh the ideas bank" && git push
+```
+
+`harvest-canvas.py` reads the Canvas token from
+`OneDrive - OptimaEd\Academic Design & Curriculum\Access tokens.txt` and never
+prints it. **`harvest.json` is gitignored on purpose**: it holds the full raw
+descriptions, quiz content included, and this repo is public.
+
+### What the build refuses to publish
+
+`build-bank.py` fails rather than shipping a bank that breaks a rule:
+
+- **A form with no provenance.** If a form's `from_` patterns match nothing in
+  the harvest, that form was invented rather than abstracted, and the build
+  stops. This has caught three bad provenance claims so far.
+- **Quiz descriptions.** Never published, so no question banks or answer keys
+  reach a public page.
+- **"Facilitator".** Corrected to "teacher" on the way in, and the build fails if
+  it survives. Note this is a correction to a *derived view* — the live courses
+  still say it in 90 places, which is a separate job.
+- **Weekday names in prose.** A weekday cannot be deleted without changing the
+  sentence, so the whole description is withheld and the item is named in the
+  run's output. Deployed instrument titles are exempt, which is why
+  "Week 1 Friday Check-up" survives as a name.
+
+Coverage is reported honestly: 142 of 169 project instruments currently sit under
+a form, and the 27 that do not are printed by name at the end of every build
+rather than hidden.
+
+### Changing the source, or cloning the tool
+
+The bank is a data file, not code, so:
+
+- **Edit it** — `ideas-bank.json` is plain JSON. Change it and push.
+- **Try a change without deploying** — the tab has a *load your own bank file*
+  control that reads a local `.json` over the published one.
+- **Harvest different courses** — the course query is at the top of
+  `harvest-canvas.py`; the shelf thresholds (`PROJECT_PTS`, `ROUTINE_MIN`) are
+  beside it.
+- **Author more forms** — add entries to `forms.py` or `forms_b.py` and rebuild.
+  The provenance gate will tell you if a new form does not correspond to anything
+  real.
+- **Clone the whole thing** — copy `planner.html` and `ideas-bank.json` to a new
+  repo and change the `BASE` constant at the top of the page's script. There is
+  no build step and no dependencies.

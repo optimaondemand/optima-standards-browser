@@ -1,3 +1,6 @@
 __pycache__/
 .DS_Store
 Thumbs.db
+harvest.json
+__probe_*.html
+__shot_*.html
