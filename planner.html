@@ -298,7 +298,8 @@ var GROUPS=[
  {id:"lang",name:"Language and craft"},
  {id:"mem", name:"Memory"},
  {id:"arg", name:"Reasoning and argument"},
- {id:"reg", name:"How the teacher works"}
+ {id:"reg", name:"How the teacher works"},
+ {id:"quant",name:"Mathematics and science"}
 ];
 var TOOLS=[
  {id:"attention",g:"read",name:"Attention",video:"",
@@ -450,7 +451,63 @@ var TOOLS=[
    {k:"format",l:"Format",t:"sel",opts:["Paired narration","The second narrates the first","Older student to younger","Class recitation or performance","Published class anthology"]},
    {k:"what",l:"What they work on together",t:"text",ph:"the shared text or task"},
    {k:"occasion",l:"Where the shared work is shown",t:"text",ph:"and to whom"}
-  ]}
+  ]},
+ {id:"model",g:"quant",name:"Model drawing",video:"",
+  how:"The student draws the structure of a word problem as bars before writing any equation. The model is the reasoning; the equation is only the notation. Show the model first, and keep using it as problems get harder rather than abandoning it when they do.",
+  spec:"Part-whole, comparison, before-and-after, or multi-step bars. Name which one this problem wants.",
+  fields:[
+   {k:"problem",l:"The word problem",t:"area",ph:"the actual problem, in full"},
+   {k:"kind",l:"Which model",t:"sel",opts:["Part-whole","Comparison","Before and after","Multi-step","Student decides"]},
+   {k:"shows",l:"What the bars have to make visible",t:"text",ph:"the quantity that was never stated"},
+   {k:"then",l:"The equation it becomes",t:"text",ph:"written only after the model is drawn"}]},
+ {id:"mental",g:"quant",name:"Mental math routine",video:"",
+  how:"A short spoken arithmetic routine using a named strategy, not a speed drill. The strategy is the content: making tens, compensating, doubling and halving, using a known fact to reach an unknown one. Say which one is being rehearsed.",
+  spec:"Short and frequent. A warm-up or a closer, not a lesson.",
+  fields:[
+   {k:"strategy",l:"The strategy being rehearsed",t:"sel",opts:["Make ten","Compensate","Double and halve","Use a known fact","Decompose by place value","Count on or back"]},
+   {k:"items",l:"The items",t:"area",ph:"six to ten, chosen so the strategy is the easy route"},
+   {k:"minutes",l:"Minutes",t:"num",ph:"5"},
+   {k:"aloud",l:"What they say aloud",t:"text",ph:"I made a ten because..."}]},
+ {id:"justify",g:"quant",name:"Justify the step",video:"",
+  how:"The student is asked to say why a step is allowed, not only to carry it out. The form grows with the stage: an explanation in Grammar, a structured argument in Logic, a genuine proof in Rhetoric. Hold them to precise language -- equal to, not the same as.",
+  spec:"Convince your teacher that. A lesson that never asks a student to justify a step has skipped this.",
+  fields:[
+   {k:"claim",l:"What they must justify",t:"area",ph:"the step, rule or result"},
+   {k:"form",l:"Form of the justification",t:"sel",opts:["Explanation in their own words (Grammar)","Structured argument (Logic)","Formal proof (Rhetoric)"]},
+   {k:"aloud",l:"Said aloud, written, or both",t:"sel",opts:["Aloud to a partner","Written","Both"]},
+   {k:"precision",l:"The language you will insist on",t:"text",ph:"equal to; if and only if; therefore"}]},
+ {id:"iconic",g:"quant",name:"Iconic experiment",video:"",
+  how:"Build the lesson around a historically great experiment and have the student re-perform it, or reason all the way through it when the apparatus is out of reach. The student learns the form of the reasoning, not only the result. Ask first whether such an experiment exists for this concept.",
+  spec:"A simulation done with understanding beats a hands-on lab done by rote. Say plainly which one this is.",
+  fields:[
+   {k:"experiment",l:"The experiment, and whose it was",t:"area",ph:"Galileo's inclined plane; Eratosthenes' shadows; Mendel's peas; Rutherford's foil"},
+   {k:"proved",l:"What it established",t:"text",ph:"and what was believed before it"},
+   {k:"athome",l:"The version the student can actually do",t:"area",ph:"ordinary materials, or say clearly that it is simulated"},
+   {k:"survives",l:"What reasoning survives the scaling down",t:"text",ph:"the part that must not be lost"}]},
+ {id:"wrongturn",g:"quant",name:"The wrong turn first",video:"",
+  how:"Teach the concept alongside the theory that was widely held, internally coherent, and wrong. Phlogiston, bad air, a static Earth, a rejected continental drift. The point is that every principle on the page was once an open question, and that being reasonable is not the same as being right.",
+  spec:"Two or three sentences, not a history lecture. One vivid case beats three rushed ones.",
+  fields:[
+   {k:"old",l:"What was believed, and why it was reasonable",t:"area",ph:"the evidence it did explain"},
+   {k:"broke",l:"The observation it could not explain",t:"text",ph:"burned metals gained weight"},
+   {k:"replaced",l:"What replaced it, and who did the work",t:"text",ph:""},
+   {k:"lesson",l:"What the student should take from the episode",t:"text",ph:"stated once, not moralised"}]},
+ {id:"diagram",g:"quant",name:"Diagram that carries the explanation",video:"",
+  how:"The visual does part of the explaining rather than illustrating an explanation already finished. Reach for one whenever the lesson involves a structure, a process in time, a quantitative relationship, a comparison, or a change of scale. Name it in the prose and refer back to it.",
+  spec:"Specify what it contains and which parts the student must label. Do not leave it to be guessed at.",
+  fields:[
+   {k:"subject",l:"What is drawn",t:"text",ph:"the structure, process, relationship or scale"},
+   {k:"type",l:"Which kind",t:"sel",opts:["Structure","Process in time","Quantitative relationship","Comparison","Scale"]},
+   {k:"contains",l:"What it must contain",t:"area",ph:"every part, named"},
+   {k:"labels",l:"What the student labels themselves",t:"text",ph:"as opposed to what arrives labelled"}]},
+ {id:"instrument",g:"quant",name:"Instrument study",video:"",
+  how:"Examine a tool of inquiry as a thing with a reach and a blind spot. The telescope showed Galileo the moons of Jupiter and also artifacts he had to learn to discount. Ask what this instrument can show, where it deceives, and how to check it. AI is the instrument students will carry into their working lives, and it belongs in this frame.",
+  spec:"Trust it, but check it, and understand what it cannot measure.",
+  fields:[
+   {k:"tool",l:"The instrument",t:"text",ph:"telescope, microscope, balance, spectrometer, an AI tool"},
+   {k:"shows",l:"What it lets them see that they could not",t:"text",ph:""},
+   {k:"deceives",l:"Where it misleads",t:"area",ph:"the artifact, the false precision, the confident wrong answer"},
+   {k:"check",l:"How its output gets verified",t:"text",ph:"the student remains responsible for this"}]}
 ];
 
 /* Field values, keyed moveId.fieldKey. Kept flat so a move can be unticked and
@@ -459,75 +516,128 @@ var MV={},AUTOFORM=true;
 
 function mv(id,k){return (MV[id+"."+k]||"").toString().trim()}
 
+/* Lesson-template groups. The menu was flat, which quietly miscategorised
+   things: progymnasmata is a COMPOSITION exercise, but sitting in an
+   undifferentiated list beside "Worked example" and "Investigation or lab" it
+   read as one more general-purpose option a maths or science teacher might
+   reach for. Grouping the menu says what each shape is for. */
+var TPLGROUPS=[
+ {id:"read", name:"Reading and response"},
+ {id:"comp", name:"Composition"},
+ {id:"mem",  name:"Memory"},
+ {id:"math", name:"Mathematics"},
+ {id:"sci",  name:"Science"},
+ {id:"craft",name:"Studio and craft"}
+];
+
 /* Templates derived from the tools above. Each scaffolds a shape, not prose. */
 var TPL={
  lesson:[
-  {id:"reading",name:"Reading lesson, closing with narration",tools:["attention","narration"],
+  {id:"reading",g:"read",name:"Reading lesson, closing with narration",tools:["attention","narration"],
    blurb:"One substantial reading, then the student retells it. The default shape for literature, history and science reading.",
    steps:["Set up the reading: one pass, say how long, no interruptions.",
           "Encounter the text.",
           "Narration, in the form set by the stage.",
           "Note for yourself: what a good retelling looks like here."]},
-  {id:"composition",name:"Composition by imitation",tools:["imitation","copia"],
+  {id:"composition",g:"comp",name:"Composition by imitation",tools:["imitation","copia"],
    blurb:"Walks the student up the imitation ladder rather than asking for original work too early.",
    steps:["Name the model, and what about it students are imitating.",
           "Say which step of the imitation sequence this is.",
           "The exercise itself.",
           "What to focus on in feedback."]},
-  {id:"skills",name:"Copywork and dictation skills lesson",tools:["copywork","dictation","attention"],
+  {id:"skills",g:"comp",name:"Copywork and dictation skills lesson",tools:["copywork","dictation","attention"],
    blurb:"Short, frequent handwriting and accuracy work on passages worth the effort.",
    steps:["The passage, presented cleanly.",
           "Copywork dose and conditions.",
           "Dictation — prepared or unprepared, with pacing.",
           "Correction protocol."]},
-  {id:"memory",name:"Memory and recitation cycle",tools:["memory","attention"],
+  {id:"memory",g:"mem",name:"Memory and recitation cycle",tools:["memory","attention"],
    blurb:"Names the piece, ties it to its story, and schedules the review and the recitation.",
    steps:["The passage, and the story or context it comes from.",
           "Introduction and first rehearsal.",
           "Review schedule across the term.",
           "The recitation occasion."]},
-  {id:"seminar",name:"Disputed question",tools:["disputed","socratic"],
+  {id:"seminar",g:"read",name:"Disputed question",tools:["disputed","socratic"],
    blurb:"A real question with sides, prepared and then argued.",
    steps:["The question, stated plainly.",
           "The strongest case on each side.",
           "Preparation the student does beforehand.",
           "What the student produces or defends."]},
-  {id:"discussion",name:"Socratic discussion",tools:["socratic","attention"],
+  {id:"discussion",g:"read",name:"Socratic discussion",tools:["socratic","attention"],
    blurb:"A prepared conversation with written opening questions.",
    steps:["The text or problem in view.",
           "Opening questions, written out.",
           "Where you expect the conversation to turn.",
           "What students prepare beforehand, and what they take away."]},
-  {id:"studio",name:"Studio or apprenticeship session",tools:["apprentice","attention"],
+  {id:"studio",g:"craft",name:"Studio or apprenticeship session",tools:["apprentice","attention"],
    blurb:"The teacher works in view of the students and they work alongside.",
    steps:["What the teacher demonstrates.",
           "What students attempt while watching.",
           "A long uninterrupted stretch of work.",
           "How work is shown and responded to."]},
-  {id:"worked",name:"Worked example, then practice",tools:["worked","review","attention"],
+  {id:"worked",g:"math",name:"Worked example, then practice",tools:["worked","review","attention"],
    blurb:"The teacher works one real instance through, students attempt one, then they work alone. The shape most maths and skills lessons actually want.",
-   steps:["A short review pass over what this rests on.",
-          "The teacher works one example all the way through, in view.",
-          "Students attempt one while the working is still up.",
-          "Independent practice, and the check that tells you who has it."]},
-  {id:"lab",name:"Investigation or lab",tools:["attention","narration","worked"],
+   steps:["A short mental-math warm-up on whatever this rests on.",
+          "The concept, with why the procedure works and not only how.",
+          "One example worked in full, in the neat vertical layout students are to imitate, with the reasoning narrated beside the steps.",
+          "Guided practice, including one prompt to explain a step aloud.",
+          "Independent practice, with at least one problem needing a model or a written explanation."]},
+  {id:"lab",g:"sci",name:"Investigation or lab",tools:["attention","narration","worked"],
    blurb:"Observe, predict, test, record, and then narrate the result rather than filling in a sheet.",
-   steps:["What they are looking at, and what they do not yet know about it.",
+   steps:["The question about what this thing is, asked before any procedure.",
+          "The briefest history: what was believed before, and what was wrong with it.",
           "The prediction, written down before anything is tested.",
-          "The investigation itself, uninterrupted.",
+          "The investigation itself, uninterrupted, with the diagram that carries the explanation.",
           "Narration of what actually happened, and where it differed from the prediction."]},
-  {id:"reviewday",name:"Review and recitation",tools:["review","memory","shared"],
+  {id:"reviewday",g:"mem",name:"Review and recitation",tools:["review","memory","shared"],
    blurb:"The weekly consolidation: a pass over everything in the cycle, ending in an occasion to recite.",
    steps:["Short review of everything currently in the cycle.",
           "Focused work on the one piece that is not secure.",
           "New material added to the cycle, tied to its story.",
           "The recitation occasion."]},
-  {id:"progym",name:"Progymnasmata exercise",tools:["progym","aloud","imitation"],
+  {id:"progym",g:"comp",name:"Progymnasmata exercise",tools:["progym","aloud","imitation"],
    blurb:"One rung of the composition ladder: read the models, name the shape, then write that exercise.",
    steps:["Two or three models of the exercise, read aloud.",
           "Name what the models have in common - the shape of the thing.",
           "The exercise, written to that shape.",
-          "What your correction will attend to."]}
+          "What your correction will attend to."]},
+  {id:"modeldraw",g:"math",name:"Word problem by model drawing",tools:["model","justify","attention"],
+   blurb:"Draw the structure of the problem as bars first. The model is the reasoning; the equation is the notation that follows it.",
+   steps:["The problem, read once without reaching for a pencil.",
+          "The model drawn: which bars, and what each one stands for.",
+          "What the drawing has made visible that the words hid.",
+          "The equation, written from the model.",
+          "A second problem of the same structure, modelled without help."]},
+  {id:"mentalmath",g:"math",name:"Mental math and number sense",tools:["mental","justify"],
+   blurb:"A named strategy rehearsed out loud, short and often. The strategy is the content, not the speed.",
+   steps:["Name the strategy and work one item aloud with it.",
+          "The items, chosen so the strategy is the easy route.",
+          "Students say why the strategy worked, in their own words.",
+          "One item where it does not help, and what to reach for instead."]},
+  {id:"proof",g:"math",name:"Justify it, then prove it",tools:["justify","attention","socratic"],
+   blurb:"The student says why a step is allowed. Explanation in Grammar, structured argument in Logic, genuine proof in Rhetoric.",
+   steps:["The claim, stated precisely enough to be argued about.",
+          "What the student may assume, and what they may not.",
+          "The justification, in the form this stage calls for.",
+          "Where the language has to be exact, and what you will correct."]},
+  {id:"iconiclab",g:"sci",name:"Iconic experiment, re-performed",tools:["iconic","diagram","narration"],
+   blurb:"Build the lesson on a historically great experiment and have the student re-perform it, or reason all the way through it when the apparatus is out of reach.",
+   steps:["The question the original experimenter was actually asking.",
+          "The experiment as they ran it, and what it settled.",
+          "The version the student performs, or the reasoning they walk if it must be simulated.",
+          "What their result was, and what it would have taken to be wrong."]},
+  {id:"wrongturn",g:"sci",name:"The theory that was wrong",tools:["wrongturn","attention","socratic"],
+   blurb:"Teach the concept alongside the explanation that was widely held, coherent, and mistaken. Being reasonable is not the same as being right.",
+   steps:["What was believed, and the evidence that made it reasonable.",
+          "The observation it could not account for.",
+          "What replaced it, and what the replacement cost to establish.",
+          "The concept itself, now that the student knows it was once in doubt."]},
+  {id:"instrumentlesson",g:"sci",name:"A new instrument, and its blind spot",tools:["instrument","diagram","attention"],
+   blurb:"Study a tool of inquiry as something with a reach and a blind spot. Applies to the telescope, the balance, and to AI.",
+   steps:["What the instrument makes visible that was not visible before.",
+          "How it works, in enough detail to reason about.",
+          "Where it deceives, with a real case of someone deceived by it.",
+          "How its output gets checked, and who stays responsible for the claim."]}
  ],
  module:[
   {id:"arc",name:"Several tools across the weeks",tools:["attention","narration","memory","imitation"],
@@ -633,8 +743,27 @@ function currentTpl(){var id=$("template").value;return templates().filter(funct
    when the SCOPE changes; doing it inside the select's own change handler tore
    down the option the teacher had just clicked and the menu stopped working. */
 function buildTemplateOptions(){
-  $("template").innerHTML=templates().map(function(t){
-    return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("");
+  var ts=templates();
+  // Grouped when the templates carry a group, flat otherwise. Module scope has
+  // two entries and an optgroup over two items is just noise.
+  var grouped=ts.some(function(t){return t.g});
+  var h="";
+  if(grouped){
+    TPLGROUPS.forEach(function(g){
+      var mine=ts.filter(function(t){return t.g===g.id});
+      if(!mine.length)return;
+      h+='<optgroup label="'+esc(g.name)+'">'+mine.map(function(t){
+        return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("")+'</optgroup>';
+    });
+    var ungrouped=ts.filter(function(t){
+      return !t.g||!TPLGROUPS.some(function(g){return g.id===t.g})});
+    if(ungrouped.length)
+      h+='<optgroup label="Other">'+ungrouped.map(function(t){
+        return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("")+'</optgroup>';
+  }else{
+    h=ts.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("");
+  }
+  $("template").innerHTML=h;
   applyTemplate();
 }
 function applyTemplate(){

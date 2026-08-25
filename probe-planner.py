@@ -35,13 +35,20 @@ PAGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "planner.html")
 
 MOVES = ["attention", "aloud", "narration", "common", "copywork", "dictation",
          "copia", "imitation", "progym", "memory", "review", "disputed",
-         "socratic", "causes", "apprentice", "worked", "shared"]
+         "socratic", "causes", "apprentice", "worked", "shared",
+         # from optima-math and optima-science
+         "model", "mental", "justify", "iconic", "wrongturn", "diagram",
+         "instrument"]
 
 GROUPS = ["Reading and attention", "Language and craft", "Memory",
-          "Reasoning and argument", "How the teacher works"]
+          "Reasoning and argument", "How the teacher works",
+          "Mathematics and science"]
 
 NEW_TPL = ["Worked example, then practice", "Investigation or lab",
-           "Review and recitation", "Progymnasmata exercise"]
+           "Review and recitation", "Progymnasmata exercise",
+           "Word problem by model drawing", "Mental math and number sense",
+           "Justify it, then prove it", "Iconic experiment, re-performed",
+           "The theory that was wrong", "A new instrument, and its blind spot"]
 
 # every field key the schema declares, so a typo in one move's fields is caught
 FIELDS = {
@@ -62,6 +69,15 @@ FIELDS = {
     "apprentice": ["demonstrates", "alongside", "release", "own"],
     "worked": ["example", "watching", "practice", "check"],
     "shared": ["format", "what", "occasion"],
+    # optima-math
+    "model": ["problem", "kind", "shows", "then"],
+    "mental": ["strategy", "items", "minutes", "aloud"],
+    "justify": ["claim", "form", "aloud", "precision"],
+    # optima-science
+    "iconic": ["experiment", "proved", "athome", "survives"],
+    "wrongturn": ["old", "broke", "replaced", "lesson"],
+    "diagram": ["subject", "type", "contains", "labels"],
+    "instrument": ["tool", "shows", "deceives", "check"],
 }
 
 
@@ -89,7 +105,7 @@ def main() -> int:
     tools = re.search(r'<div id="tools">(.*?)\n  <h2>Assets', dom, re.S)
     ck(tools is not None, "the moves panel rendered")
     panel = tools.group(1) if tools else ""
-    ck(panel.count('class="tool"') == 17, "17 move boxes in the panel (got %d)"
+    ck(panel.count('class="tool"') == 24, "24 move boxes in the panel (got %d)"
        % panel.count('class="tool"'))
 
     # --- every move present, grouped -------------------------------------
@@ -114,10 +130,41 @@ def main() -> int:
     sel = re.search(r'<select id="template">(.*?)</select>', dom, re.S)
     ck(sel is not None, "the template menu rendered")
     opts = sel.group(1) if sel else ""
-    ck(opts.count("<option") == 11, "11 lesson templates (7 old + 4 new); got %d"
+    ck(opts.count("<option") == 17,
+       "17 lesson templates (7 original + 4 + 6 from the maths/science skills); got %d"
        % opts.count("<option"))
     for t in NEW_TPL:
         ck(t in opts, "new template present: %s" % t)
+
+    # --- the template menu is GROUPED, and progymnasmata is a composition
+    # exercise, not a maths/science one. It was added in the same batch as the
+    # maths and science shapes into a flat menu, which made it read as one.
+    groups = re.findall(r'<optgroup label="([^"]*)">(.*?)</optgroup>', opts, re.S)
+    ck(len(groups) == 6, "the template menu renders 6 optgroups (got %d)" % len(groups))
+    by_group = {name: body for name, body in groups}
+    ck("Progymnasmata exercise" in by_group.get("Composition", ""),
+       "progymnasmata sits under Composition")
+    for g in ("Mathematics", "Science"):
+        ck("Progymnasmata" not in by_group.get(g, ""),
+           "progymnasmata is NOT under %s" % g)
+    # Mathematics and Science are separate shelves, each populated from its own
+    # subject skill rather than from two guesses in a shared group.
+    for want, g in (("Worked example, then practice", "Mathematics"),
+                    ("Word problem by model drawing", "Mathematics"),
+                    ("Mental math and number sense", "Mathematics"),
+                    ("Justify it, then prove it", "Mathematics"),
+                    ("Investigation or lab", "Science"),
+                    ("Iconic experiment, re-performed", "Science"),
+                    ("The theory that was wrong", "Science"),
+                    ("A new instrument, and its blind spot", "Science")):
+        ck(want in by_group.get(g, ""), "%s is under %s" % (want, g))
+    ck(by_group.get("Mathematics", "").count("<option") == 4,
+       "Mathematics has 4 templates (got %d)"
+       % by_group.get("Mathematics", "").count("<option"))
+    ck(by_group.get("Science", "").count("<option") == 4,
+       "Science has 4 templates (got %d)" % by_group.get("Science", "").count("<option"))
+    ck(sum(b.count("<option") for b in by_group.values()) == 17,
+       "every template landed in exactly one group")
 
     # --- the default template's ticks revealed their fields ---------------
     ck('data-tick="true"' in panel,
