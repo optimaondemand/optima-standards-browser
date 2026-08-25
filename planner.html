@@ -75,6 +75,13 @@
   .totals .t span{color:#9fb6c9}
   .totals hr{border:none;border-top:1px solid #2c4d6e;margin:7px 0}
   .ref{font-size:11.5px;color:#8fa9bf;margin-top:8px;line-height:1.5}
+  #stateCode{font-family:var(--mono);font-size:10.5px;line-height:1.35;resize:vertical}
+  .savebar{display:flex;gap:6px;margin-top:6px}
+  .savebar button{flex:1;font:inherit;font-size:12.5px;padding:6px 8px;border-radius:5px;
+    border:1px solid #2c4d6e;background:transparent;color:#cfe0ec;cursor:pointer;font-weight:600}
+  .savebar button:hover{border-color:var(--cyan);color:#fff}
+  .savebar button[data-armed=true]{background:var(--cyan);border-color:var(--cyan);color:#04212b}
+  .saved{font-size:11px;color:#7f97ab;margin-top:5px;min-height:14px}
 
   .shelf{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
   .shelf button{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;cursor:pointer;
@@ -205,6 +212,17 @@
   <p class="note">What you need ready before you teach this.</p>
   <div id="assets"></div>
   <button class="add" id="addAsset" type="button">+ Add an asset</button>
+
+  <h2>Save and reopen</h2>
+  <p class="note">Your work is kept in this browser as you type. To move a plan to
+    another computer, or hand it to someone else, copy the code.</p>
+  <textarea id="stateCode" rows="3" readonly></textarea>
+  <div class="savebar">
+    <button id="copyCode" type="button">Copy code</button>
+    <button id="openCode" type="button">Open a code</button>
+  </div>
+  <div class="savebar"><button id="resetAll" type="button">Start a new plan</button></div>
+  <div class="saved" id="savedNote"></div>
 
   <h2>Time calculator</h2>
   <p class="note">An estimate, not a rule. Change any number. The tier just fills in a starting figure.</p>
@@ -521,6 +539,12 @@ function mv(id,k){return (MV[id+"."+k]||"").toString().trim()}
    undifferentiated list beside "Worked example" and "Investigation or lab" it
    read as one more general-purpose option a maths or science teacher might
    reach for. Grouping the menu says what each shape is for. */
+var MODGROUPS=[
+ {id:"mtext",name:"Text and argument"},
+ {id:"mmake",name:"Studio and making"},
+ {id:"msci", name:"Science and mathematics"},
+ {id:"mterm",name:"Survey, review and finals"}
+];
 var TPLGROUPS=[
  {id:"read", name:"Reading and response"},
  {id:"comp", name:"Composition"},
@@ -640,18 +664,67 @@ var TPL={
           "How its output gets checked, and who stays responsible for the claim."]}
  ],
  module:[
-  {id:"arc",name:"Several tools across the weeks",tools:["attention","narration","memory","imitation"],
+  {id:"arc",g:"mtext",name:"Several tools across the weeks",tools:["attention","narration","memory","imitation"],
    blurb:"Over a module all the major tools should appear; in any one lesson, three or four well used beat all of them sketched.",
    steps:["Week 1 — encounter and narration.",
           "Week 2 — memory work introduced; skills practice.",
           "Week 3 — imitation or disputed question.",
           "Week 4 — composition, recitation, and the assessed piece."]},
-  {id:"unit",name:"Text-centred unit",tools:["attention","narration","copywork","imitation"],
+  {id:"unit",g:"mtext",name:"Text-centred unit",tools:["attention","narration","copywork","imitation"],
    blurb:"Built around one main text that students read across the whole module.",
    steps:["The main text, and why you chose it.",
           "Reading schedule and narration points.",
           "Copywork and memory drawn from the text itself.",
-          "The culminating composition, imitating something in it."]}
+          "The culminating composition, imitating something in it."]},
+  {id:"feeder",g:"mtext",name:"Feeder chain to one deep project",tools:["attention","narration","imitation","disputed"],
+   blurb:"Four or five small graded steps across the module, ending in the one piece you read closely. The most reusable module shape in the courses already built.",
+   steps:["Name the final piece first, then work backwards from it.",
+          "One feeder a week: position, then evidence, then thesis, then outline.",
+          "Feeders score light; the final piece carries the weight.",
+          "Project week: the draft and the final, with nothing new introduced.",
+          "A module map at the top of each week so students can see where they are."]},
+  {id:"twopart",g:"mtext",name:"Two-part final: argument and made thing",tools:["narration","imitation","attention","shared"],
+   blurb:"One idea, argued in prose and then made in a form that cannot use prose. Students who write well and students who make well each get somewhere to succeed.",
+   steps:["The one idea both halves have to address, stated once.",
+          "Weeks of reading and short practice on that idea.",
+          "The written half, drafted then finished.",
+          "The made half: visual, spatial, or recorded.",
+          "A short reflection naming what the two halves have in common."]},
+  {id:"menu",g:"mtext",name:"Format menu, chosen early and built weekly",tools:["imitation","disputed","apprentice","shared"],
+   blurb:"Every student answers the same question; each chooses the form to answer it in, commits by week three, and builds it in a short sitting every week after.",
+   steps:["The question, and the format menu with its real standards.",
+          "Weeks 1 to 3: the question, and enough of each format to choose well.",
+          "Week 3: the choice is locked and does not change.",
+          "One short building sitting a week from then on.",
+          "The finished piece, held to the criteria that apply to every format."]},
+  {id:"studiocycle",g:"mmake",name:"Studio cycles: lesson, then artwork and statement",tools:["apprentice","attention","imitation","shared"],
+   blurb:"Two-week cycles: the first week teaches and rehearses one element, the second produces a finished piece with a short statement. The shape the art courses already run.",
+   steps:["Week 1: the element or principle, demonstrated and rehearsed on scrap.",
+          "The master or tradition being worked from, named.",
+          "Week 2: the finished piece, with materials that work at home.",
+          "The artist statement: the choice made, and why.",
+          "How work gets shown to the others."]},
+  {id:"labseq",g:"msci",name:"Reading-and-lesson pairs to a module deliverable",tools:["diagram","iconic","justify","narration"],
+   blurb:"Each week pairs one reading to one lesson, each producing a labelled diagram and a short warranted claim, all building to one module writing assignment.",
+   steps:["The module question, asked about the nature of the thing.",
+          "Weekly pairs: reading, lesson, diagram, and one claim from it.",
+          "The iconic experiment, re-performed or reasoned through, once in the module.",
+          "The module writing assignment: a lab report or a scientific argument.",
+          "A cross-module note on what this rests on and what rests on it."]},
+  {id:"survey",g:"mterm",name:"Survey, then one deep profile",tools:["attention","narration","common","shared"],
+   blurb:"Meet many things quickly, then slow down and work one of them the way a specialist would. Answers the real problem with survey modules.",
+   steps:["The survey: one thing a week, wide and deliberately fast.",
+          "A running journal or commonplace entry for each, so nothing is lost.",
+          "The student chooses one to go deep on.",
+          "The deep profile, researched with the specialist's method named.",
+          "A map or comparison showing how the surveyed things relate."]},
+  {id:"finals",g:"mterm",name:"Review and finals module",tools:["review","memory","justify","shared"],
+   blurb:"The consolidation module: distributed review of everything in the cycle, a recitation or performance occasion, and an exam drawn only from what students have already met.",
+   steps:["What is in the review cycle, listed in full.",
+          "A review lesson and a review activity, not a revision week of silence.",
+          "The recitation or performance occasion.",
+          "The exam, drawn from items already seen, so nothing on it is new.",
+          "A confirm-your-submissions checklist to close the term."]}
  ]
 };
 
@@ -684,17 +757,26 @@ fetch(BASE+"bundles-manifest.json").then(function(r){return r.json()}).then(func
     return '<option value="'+esc(g)+'">'+(g==="K"?"Kindergarten":g==="ungraded"?"Ungraded":"Grade "+g)+'</option>'}).join("");
   $("subject").value=subs.indexOf("English Language Arts")>=0?"English Language Arts":subs[0];
   $("grade").value="6";
+  // A saved plan carries its own subject and grade, so let restore drive the
+  // first bundle load rather than fetching the default one and discarding it.
+  if(!RESTORED&&hasSaved){bootOnce();return}
+  bootOnce();
   loadBundle();
 }).catch(function(e){
   $("stdList").innerHTML='<div style="color:#f0a0a0;font-size:13px">Could not load the standards index: '+esc(e.message)+'</div>';
 });
 
-function loadBundle(){
+/* `after` exists for restore: the standards list is fetched asynchronously and
+   the fetch clears `picked`, so anything that wants to re-tick saved standards
+   has to run once the bundle has actually arrived. */
+function loadBundle(after){
   var key=$("subject").value+"|"+$("grade").value,entry=MAN&&MAN.index[key];
   picked={};
-  if(!entry){BUNDLE=null;$("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Nothing published for this combination yet.</div>';render();return}
+  if(!entry){BUNDLE=null;$("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Nothing published for this combination yet.</div>';render();if(after)after();return}
   $("stdList").innerHTML='<div style="color:#8fa9bf;font-size:13px">Loading '+entry.standards+' standards…</div>';
-  fetch(BASE+entry.file).then(function(r){return r.json()}).then(function(b){BUNDLE=b;drawStds();render()});
+  fetch(BASE+entry.file).then(function(r){return r.json()}).then(function(b){
+    BUNDLE=b;drawStds();render();if(after)after();
+  });
 }
 function drawStds(){
   var byJ={},ci={};
@@ -746,17 +828,20 @@ function buildTemplateOptions(){
   var ts=templates();
   // Grouped when the templates carry a group, flat otherwise. Module scope has
   // two entries and an optgroup over two items is just noise.
+  // Module groups are their own list: "Composition" or "Science" describe the
+  // shape of one lesson and say nothing useful about a whole module.
+  var GL=$("scope").value==="module"?MODGROUPS:TPLGROUPS;
   var grouped=ts.some(function(t){return t.g});
   var h="";
   if(grouped){
-    TPLGROUPS.forEach(function(g){
+    GL.forEach(function(g){
       var mine=ts.filter(function(t){return t.g===g.id});
       if(!mine.length)return;
       h+='<optgroup label="'+esc(g.name)+'">'+mine.map(function(t){
         return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("")+'</optgroup>';
     });
     var ungrouped=ts.filter(function(t){
-      return !t.g||!TPLGROUPS.some(function(g){return g.id===t.g})});
+      return !t.g||!GL.some(function(g){return g.id===t.g})});
     if(ungrouped.length)
       h+='<optgroup label="Other">'+ungrouped.map(function(t){
         return '<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join("")+'</optgroup>';
@@ -998,9 +1083,126 @@ function render(){
     '<div class="t"><span>One student, to do all of it</span><b>'+fmt(t.student)+'</b></div>'+
     '<div class="ref">Tier sets the opening estimate only — Tier 3 starts at five minutes a student because that is what close feedback against a rubric tends to cost. Change any figure to match what this actually takes you.</div>';
   drawDoc(t);drawTiers();drawPrompt(t);
+  save();
 }
 
 function stdRows(){return Object.keys(picked).map(function(k){return picked[k]})}
+
+/* ---------------------------------------------------------------------------
+   Persistence. Two mechanisms: an autosave to localStorage so nothing is lost
+   by closing a tab, and a copyable plan code so a plan can move between
+   machines or between people. Both carry the same object.
+--------------------------------------------------------------------------- */
+var LSKEY="optima-planner-v1",saveTimer=null,codeDirty=false;
+
+var FIELDS=["subject","grade","scope","template","title","weeks","sessions",
+            "quarter","question","rhythm","stage","len","roster"];
+
+function collectState(){
+  var f={};
+  FIELDS.forEach(function(id){var el=$(id);if(el)f[id]=el.value});
+  var ticks=[];
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),
+    function(cb){if(cb.checked)ticks.push(cb.dataset.t)});
+  return {v:1,f:f,picked:picked,mv:MV,ticks:ticks,items:items,assets:assets,
+          mod:{tracks:MOD.tracks,cells:MOD.cells,seq:MOD.seq},
+          idea:IDEA,chosen:CHOSEN,joff:jOff,autoform:AUTOFORM};
+}
+
+/* Unicode-safe base64. The plan can contain standard wording, quotation marks
+   and dashes, and btoa alone throws on anything above U+00FF. */
+function encodeState(s){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(s))));
+}
+function decodeState(t){
+  return JSON.parse(decodeURIComponent(escape(atob(String(t).replace(/\s+/g,"")))));
+}
+
+function saveNow(){
+  try{
+    localStorage.setItem(LSKEY,JSON.stringify(collectState()));
+    note("Saved in this browser.");
+  }catch(e){
+    // private windows and blocked site data both land here; the tool still works
+    note("This browser is not storing the plan. Copy the code to keep it.");
+  }
+  if(!codeDirty){
+    try{$("stateCode").value=encodeState(collectState())}catch(e){}
+  }
+}
+function save(){
+  if(saveTimer)clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveNow,400);
+}
+function note(t){$("savedNote").textContent=t}
+
+/* Applying a state has an order that matters:
+     1. MV first, because drawMoves() reads it when it builds the inputs
+     2. drawMoves(), so the field elements exist
+     3. the ticks, explicitly, AFTER buildTemplateOptions -- which calls
+        applyTemplate and would otherwise tick the template's own tools over
+        whatever the teacher had actually chosen
+     4. the standards last, once the async bundle has landed */
+function applyState(s,done){
+  if(!s||!s.f){if(done)done();return}
+  MV=s.mv||{};
+  IDEA=s.idea||{};
+  CHOSEN=s.chosen||null;
+  jOff=s.joff||{};
+  AUTOFORM=(s.autoform!==false);
+
+  items.length=0;(s.items||[]).forEach(function(x){items.push(x)});
+  assets.length=0;(s.assets||[]).forEach(function(x){assets.push(x)});
+  if(s.mod){
+    MOD.tracks=s.mod.tracks||MOD.tracks;
+    MOD.cells=s.mod.cells||{};
+    MOD.seq=s.mod.seq||MOD.seq;
+  }
+
+  FIELDS.forEach(function(id){
+    if(id==="template")return;              // needs its options built first
+    var el=$(id);
+    if(el&&s.f[id]!==undefined)el.value=s.f[id];
+  });
+
+  var mod=$("scope").value==="module";
+  $("modOnly").style.display=mod?"block":"none";
+  $("weeksTab").style.display=mod?"":"none";
+
+  drawMoves();
+  buildTemplateOptions();
+  if(s.f.template){
+    $("template").value=s.f.template;
+    applyTemplate();
+  }
+  // now override whatever the template ticked with what was actually saved
+  var want=s.ticks||[];
+  Array.prototype.forEach.call($("tools").querySelectorAll("input[type=checkbox][data-t]"),
+    function(cb){cb.checked=want.indexOf(cb.dataset.t)>=0});
+  syncTicks();
+
+  drawItems();drawAssets();
+  if(mod){drawTracks();drawGrid()}
+
+  var saved=s.picked||{};
+  loadBundle(function(){
+    Object.keys(saved).forEach(function(k){picked[k]=saved[k]});
+    Array.prototype.forEach.call($("stdList").querySelectorAll("input"),function(cb){
+      if(picked[cb.dataset.code])cb.checked=true;
+    });
+    render();
+    if(done)done();
+  });
+}
+
+function restore(){
+  var raw=null;
+  try{raw=localStorage.getItem(LSKEY)}catch(e){}
+  if(!raw)return false;
+  try{applyState(JSON.parse(raw));note("Reopened your last plan.");return true}
+  catch(e){note("A saved plan was there but could not be read.");return false}
+}
+
 
 /* ---------------------------------------------------------------------------
    The project-ideas bank. A separate JSON file, deliberately: the source can be
@@ -1479,6 +1681,49 @@ Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(
     Array.prototype.forEach.call(document.querySelectorAll(".pane"),function(p){p.dataset.on=String(p.dataset.p===tab)});
   });
 });
+/* The code box: readonly and refreshed from state until the teacher arms it to
+   paste one in, at which point it stops being overwritten. */
+$("copyCode").addEventListener("click",function(){
+  codeDirty=false;
+  $("stateCode").value=encodeState(collectState());
+  $("stateCode").select();
+  navigator.clipboard.writeText($("stateCode").value).then(function(){
+    note("Code copied. Paste it anywhere to reopen this plan.");
+  },function(){note("Select the code and copy it.")});
+});
+$("openCode").addEventListener("click",function(){
+  var box=$("stateCode"),btn=$("openCode");
+  if(btn.dataset.armed!=="true"){
+    btn.dataset.armed="true";btn.textContent="Open this code";
+    box.readOnly=false;box.value="";box.placeholder="Paste a plan code here";
+    codeDirty=true;box.focus();
+    note("Paste a code, then press Open this code.");
+    return;
+  }
+  var t=box.value.trim();
+  btn.dataset.armed="false";btn.textContent="Open a code";box.readOnly=true;
+  if(!t){codeDirty=false;saveNow();note("Nothing pasted.");return}
+  var s=null;
+  try{s=decodeState(t)}catch(e){note("That code could not be read.");codeDirty=false;saveNow();return}
+  applyState(s,function(){codeDirty=false;saveNow();note("Plan opened from a code.")});
+});
+$("stateCode").addEventListener("input",function(){codeDirty=true});
+$("resetAll").addEventListener("click",function(){
+  var btn=$("resetAll");
+  if(btn.dataset.armed!=="true"){
+    btn.dataset.armed="true";btn.textContent="Really start over?";
+    note("This clears the plan in this browser. Copy the code first if you want it.");
+    setTimeout(function(){
+      if(btn.dataset.armed==="true"){
+        btn.dataset.armed="false";btn.textContent="Start a new plan";note("");
+      }
+    },6000);
+    return;
+  }
+  try{localStorage.removeItem(LSKEY)}catch(e){}
+  location.reload();
+});
+
 $("ideaFind").addEventListener("input",drawIdeas);
 $("bankFile").addEventListener("change",function(){
   var f=$("bankFile").files&&$("bankFile").files[0];
@@ -1515,14 +1760,27 @@ $("dl").addEventListener("click",function(){
   setTimeout(function(){URL.revokeObjectURL(u)},1000);
 });
 
-drawMoves();
-buildTemplateOptions();
-syncNarrationForm();
-syncTicks();
-addAsset("Text or reading","");
-addItem(4,"Reading and preparation",0,30);
-addItem(3,"Narration",5,20);
-drawItems();drawAssets();render();
+/* Restore a saved plan if there is one; otherwise open with the defaults. The
+   manifest fetch may not have resolved yet, so restore() is also called again
+   from the manifest handler -- whichever runs second finds RESTORED already set
+   and does nothing. */
+var RESTORED=false;
+function bootOnce(){
+  if(RESTORED)return;
+  RESTORED=true;
+  if(restore())return;
+  drawMoves();
+  buildTemplateOptions();
+  syncNarrationForm();
+  syncTicks();
+  addAsset("Text or reading","");
+  addItem(4,"Reading and preparation",0,30);
+  addItem(3,"Narration",5,20);
+  drawItems();drawAssets();render();
+}
+var hasSaved=false;
+try{hasSaved=!!localStorage.getItem(LSKEY)}catch(e){}
+if(!hasSaved)bootOnce();
 })();
 </script>
 </body>

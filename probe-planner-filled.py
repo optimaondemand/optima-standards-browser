@@ -178,6 +178,28 @@ def main() -> int:
     ck('data-p="weeks"' in dom2 and 'id="weeksTab" style=""' in dom2,
        "the week-by-week tab is revealed in module scope")
 
+    # --- module scope has its OWN grouped menu. It held 2 templates against 17
+    # for lessons, which is backwards for a school built in modules.
+    msel = re.search(r'<select id="template">(.*?)</select>', dom2, re.S)
+    mopts = msel.group(1) if msel else ""
+    ck(mopts.count("<option") == 9,
+       "9 module templates (2 original + 7 from the course-builder skill and the"
+       " harvested shapes); got %d" % mopts.count("<option"))
+    mgroups = dict(re.findall(r'<optgroup label="([^"]*)">(.*?)</optgroup>', mopts, re.S))
+    ck(sorted(mgroups) == ["Science and mathematics", "Studio and making",
+                           "Survey, review and finals", "Text and argument"],
+       "the module menu uses the MODULE groups, not the lesson ones (got %s)"
+       % sorted(mgroups))
+    for want, g in (("Feeder chain to one deep project", "Text and argument"),
+                    ("Format menu, chosen early and built weekly", "Text and argument"),
+                    ("Studio cycles: lesson, then artwork and statement", "Studio and making"),
+                    ("Reading-and-lesson pairs to a module deliverable", "Science and mathematics"),
+                    ("Review and finals module", "Survey, review and finals")):
+        ck(want in mgroups.get(g, ""), "module template %r is under %r" % (want[:38], g))
+    # the lesson groups must not leak into the module menu
+    for leak in ("Composition", "Reading and response", "Mathematics", "Science"):
+        ck(leak not in mgroups, "lesson group %r does not appear in the module menu" % leak)
+
     bad = [m for ok, m in checks if not ok]
     print("%d checks, %d failed" % (len(checks), len(bad)))
     for m in bad:
